@@ -1,0 +1,202 @@
+## This file contains all the build statements describing the
+# compilation DAG.
+
+# =============================================================================
+# Write statements declared in CMakeLists.txt:
+# 
+# Which is the root file.
+# =============================================================================
+
+# =============================================================================
+# Project: TCPLossyNetwork
+# Configurations: Debug
+# =============================================================================
+
+#############################################
+# Minimal version of Ninja required by this file
+
+ninja_required_version = 1.5
+
+
+#############################################
+# Set configuration variable for custom commands.
+
+CONFIGURATION = Debug
+# =============================================================================
+# Include auxiliary files.
+
+
+#############################################
+# Include rules file.
+
+include CMakeFiles/rules.ninja
+
+# =============================================================================
+
+#############################################
+# Logical path to working directory; prefix for absolute paths.
+
+cmake_ninja_workdir = /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug/
+
+#############################################
+# Utility command for doxygen
+
+build doxygen: phony CMakeFiles/doxygen
+
+# =============================================================================
+# Object build statements for EXECUTABLE target TCPLossyNetwork
+
+
+#############################################
+# Order-only phony target for TCPLossyNetwork
+
+build cmake_object_order_depends_target_TCPLossyNetwork: phony || doxygen
+
+build CMakeFiles/TCPLossyNetwork.dir/src/main.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/CLionProjects/TCPLossyNetwork/src/main.c || cmake_object_order_depends_target_TCPLossyNetwork
+  DEFINES = -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
+  DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/main.c.o.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings
+  INCLUDES = -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include
+  OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
+  OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src
+
+build CMakeFiles/TCPLossyNetwork.dir/src/conversion.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/CLionProjects/TCPLossyNetwork/src/conversion.c || cmake_object_order_depends_target_TCPLossyNetwork
+  DEFINES = -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
+  DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/conversion.c.o.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings
+  INCLUDES = -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include
+  OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
+  OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src
+
+build CMakeFiles/TCPLossyNetwork.dir/src/client/client.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/CLionProjects/TCPLossyNetwork/src/client/client.c || cmake_object_order_depends_target_TCPLossyNetwork
+  DEFINES = -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
+  DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/client/client.c.o.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings
+  INCLUDES = -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include
+  OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
+  OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src/client
+
+build CMakeFiles/TCPLossyNetwork.dir/src/server/server.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/CLionProjects/TCPLossyNetwork/src/server/server.c || cmake_object_order_depends_target_TCPLossyNetwork
+  DEFINES = -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
+  DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/server/server.c.o.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings
+  INCLUDES = -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include
+  OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
+  OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src/server
+
+build CMakeFiles/TCPLossyNetwork.dir/src/utils.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/CLionProjects/TCPLossyNetwork/src/utils.c || cmake_object_order_depends_target_TCPLossyNetwork
+  DEFINES = -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
+  DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/utils.c.o.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings
+  INCLUDES = -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include
+  OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
+  OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src
+
+build CMakeFiles/TCPLossyNetwork.dir/src/error.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/CLionProjects/TCPLossyNetwork/src/error.c || cmake_object_order_depends_target_TCPLossyNetwork
+  DEFINES = -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
+  DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/error.c.o.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings
+  INCLUDES = -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include
+  OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
+  OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target TCPLossyNetwork
+
+
+#############################################
+# Link the executable TCPLossyNetwork
+
+build TCPLossyNetwork: C_EXECUTABLE_LINKER__TCPLossyNetwork_Debug CMakeFiles/TCPLossyNetwork.dir/src/main.c.o CMakeFiles/TCPLossyNetwork.dir/src/conversion.c.o CMakeFiles/TCPLossyNetwork.dir/src/client/client.c.o CMakeFiles/TCPLossyNetwork.dir/src/server/server.c.o CMakeFiles/TCPLossyNetwork.dir/src/utils.c.o CMakeFiles/TCPLossyNetwork.dir/src/error.c.o || doxygen
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk
+  OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = TCPLossyNetwork
+  TARGET_PDB = TCPLossyNetwork.dbg
+
+
+#############################################
+# Utility command for edit_cache
+
+build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug && /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+  DESC = No interactive CMake dialog available...
+  restat = 1
+
+build edit_cache: phony CMakeFiles/edit_cache.util
+
+
+#############################################
+# Utility command for rebuild_cache
+
+build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug && /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake --regenerate-during-build -S/Users/hansollee/CLionProjects/TCPLossyNetwork -B/Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug
+  DESC = Running CMake to regenerate build system...
+  pool = console
+  restat = 1
+
+build rebuild_cache: phony CMakeFiles/rebuild_cache.util
+
+
+#############################################
+# Custom command for CMakeFiles/doxygen
+
+build CMakeFiles/doxygen | ${cmake_ninja_workdir}CMakeFiles/doxygen: CUSTOM_COMMAND Doxyfile.doxygen ../include/conversion.h ../include/error.h
+  COMMAND = cd /Users/hansollee/CLionProjects/TCPLossyNetwork && /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E make_directory /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug && /usr/local/bin/doxygen /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug/Doxyfile.doxygen
+  DESC = Generating Doxygen documentation for v1
+
+# =============================================================================
+# Target aliases.
+
+# =============================================================================
+# Folder targets.
+
+# =============================================================================
+
+#############################################
+# Folder: /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug
+
+build all: phony TCPLossyNetwork
+
+# =============================================================================
+# Built-in targets
+
+
+#############################################
+# Re-run CMake if any of its inputs changed.
+
+build build.ninja: RERUN_CMAKE | ../CMakeLists.txt /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeCInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeCommonLanguageInclude.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeGenericSystem.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeInitializeConfigs.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeLanguageInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeSystemSpecificInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeSystemSpecificInitialize.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Compiler/AppleClang-C.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Compiler/CMakeCommonCompilerMacros.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Compiler/Clang.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Compiler/GNU.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/FindDoxygen.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/FindPackageHandleStandardArgs.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/FindPackageMessage.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Platform/Apple-AppleClang-C.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Platform/Apple-Clang-C.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Platform/Apple-Clang.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Platform/Darwin-Initialize.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Platform/Darwin.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeDoxyfile.in CMakeDoxygenDefaults.cmake CMakeFiles/3.23.2/CMakeCCompiler.cmake CMakeFiles/3.23.2/CMakeSystem.cmake
+  pool = console
+
+
+#############################################
+# A missing CMake input file is not an error.
+
+build ../CMakeLists.txt /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeCInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeCommonLanguageInclude.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeGenericSystem.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeInitializeConfigs.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeLanguageInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeSystemSpecificInformation.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/CMakeSystemSpecificInitialize.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Compiler/AppleClang-C.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Compiler/CMakeCommonCompilerMacros.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Compiler/Clang.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Compiler/GNU.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/FindDoxygen.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/FindPackageHandleStandardArgs.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/FindPackageMessage.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Platform/Apple-AppleClang-C.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Platform/Apple-Clang-C.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Platform/Apple-Clang.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Platform/Darwin-Initialize.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Platform/Darwin.cmake /Applications/CLion.app/Contents/bin/cmake/mac/share/cmake-3.23/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeDoxyfile.in CMakeDoxygenDefaults.cmake CMakeFiles/3.23.2/CMakeCCompiler.cmake CMakeFiles/3.23.2/CMakeSystem.cmake: phony
+
+
+#############################################
+# Clean additional files.
+
+build CMakeFiles/clean.additional: CLEAN_ADDITIONAL
+  CONFIG = Debug
+
+
+#############################################
+# Clean all the built files.
+
+build clean: CLEAN CMakeFiles/clean.additional
+
+
+#############################################
+# Print all primary targets available.
+
+build help: HELP
+
+
+#############################################
+# Make the all target the default.
+
+default all

@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700 -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings -o CMakeFiles/TCPLossyNetwork.dir/src/main.c.o -c /Users/hansollee/CLionProjects/TCPLossyNetwork/src/main.c",
+  "file": "/Users/hansollee/CLionProjects/TCPLossyNetwork/src/main.c"
+},
+{
+  "directory": "/Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700 -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings -o CMakeFiles/TCPLossyNetwork.dir/src/conversion.c.o -c /Users/hansollee/CLionProjects/TCPLossyNetwork/src/conversion.c",
+  "file": "/Users/hansollee/CLionProjects/TCPLossyNetwork/src/conversion.c"
+},
+{
+  "directory": "/Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700 -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings -o CMakeFiles/TCPLossyNetwork.dir/src/client/client.c.o -c /Users/hansollee/CLionProjects/TCPLossyNetwork/src/client/client.c",
+  "file": "/Users/hansollee/CLionProjects/TCPLossyNetwork/src/client/client.c"
+},
+{
+  "directory": "/Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700 -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings -o CMakeFiles/TCPLossyNetwork.dir/src/server/server.c.o -c /Users/hansollee/CLionProjects/TCPLossyNetwork/src/server/server.c",
+  "file": "/Users/hansollee/CLionProjects/TCPLossyNetwork/src/server/server.c"
+},
+{
+  "directory": "/Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700 -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings -o CMakeFiles/TCPLossyNetwork.dir/src/utils.c.o -c /Users/hansollee/CLionProjects/TCPLossyNetwork/src/utils.c",
+  "file": "/Users/hansollee/CLionProjects/TCPLossyNetwork/src/utils.c"
+},
+{
+  "directory": "/Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug",
+  "command": "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700 -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings -o CMakeFiles/TCPLossyNetwork.dir/src/error.c.o -c /Users/hansollee/CLionProjects/TCPLossyNetwork/src/error.c",
+  "file": "/Users/hansollee/CLionProjects/TCPLossyNetwork/src/error.c"
+}
+]
