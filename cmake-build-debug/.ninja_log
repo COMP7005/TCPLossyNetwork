@@ -1,0 +1,8 @@
+# ninja log v5
+1	185	0	CMakeFiles/doxygen	434af9b2bcf671e9
+189	1053	1668329886431182930	CMakeFiles/TCPLossyNetwork.dir/src/utils.c.o	405a96b1d4588543
+3517	6190	1668329779383863037	CMakeFiles/TCPLossyNetwork.dir/src/main.c.o	34ab9a2836a17afe
+3518	6192	1668329779383919246	CMakeFiles/TCPLossyNetwork.dir/src/conversion.c.o	9c1535138f36660a
+1	185	0	/Users/hansollee/Desktop/Project/source/TCPLossyNetwork/cmake-build-debug/CMakeFiles/doxygen	434af9b2bcf671e9
+187	3826	1668329889205270587	CMakeFiles/TCPLossyNetwork.dir/src/receiver/receiver.c.o	1f0e1dbf5d330aeb
+1054	2547	1668329887924800717	CMakeFiles/TCPLossyNetwork.dir/src/error.c.o	ed5e560437cae714

@@ -36,7 +36,7 @@ include CMakeFiles/rules.ninja
 #############################################
 # Logical path to working directory; prefix for absolute paths.
 
-cmake_ninja_workdir = /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug/
+cmake_ninja_workdir = /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/cmake-build-debug/
 
 #############################################
 # Utility command for doxygen
@@ -52,51 +52,59 @@ build doxygen: phony CMakeFiles/doxygen
 
 build cmake_object_order_depends_target_TCPLossyNetwork: phony || doxygen
 
-build CMakeFiles/TCPLossyNetwork.dir/src/main.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/CLionProjects/TCPLossyNetwork/src/main.c || cmake_object_order_depends_target_TCPLossyNetwork
+build CMakeFiles/TCPLossyNetwork.dir/src/main.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/src/main.c || cmake_object_order_depends_target_TCPLossyNetwork
   DEFINES = -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
   DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/main.c.o.d
   FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings
-  INCLUDES = -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include
+  INCLUDES = -I/Users/hansollee/Desktop/Project/source/TCPLossyNetwork/include
   OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
   OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src
 
-build CMakeFiles/TCPLossyNetwork.dir/src/conversion.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/CLionProjects/TCPLossyNetwork/src/conversion.c || cmake_object_order_depends_target_TCPLossyNetwork
+build CMakeFiles/TCPLossyNetwork.dir/src/conversion.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/src/conversion.c || cmake_object_order_depends_target_TCPLossyNetwork
   DEFINES = -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
   DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/conversion.c.o.d
   FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings
-  INCLUDES = -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include
+  INCLUDES = -I/Users/hansollee/Desktop/Project/source/TCPLossyNetwork/include
   OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
   OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src
 
-build CMakeFiles/TCPLossyNetwork.dir/src/client/client.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/CLionProjects/TCPLossyNetwork/src/client/client.c || cmake_object_order_depends_target_TCPLossyNetwork
+build CMakeFiles/TCPLossyNetwork.dir/src/sender/sender.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/src/sender/sender.c || cmake_object_order_depends_target_TCPLossyNetwork
   DEFINES = -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
-  DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/client/client.c.o.d
+  DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/sender/sender.c.o.d
   FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings
-  INCLUDES = -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include
+  INCLUDES = -I/Users/hansollee/Desktop/Project/source/TCPLossyNetwork/include
   OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
-  OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src/client
+  OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src/sender
 
-build CMakeFiles/TCPLossyNetwork.dir/src/server/server.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/CLionProjects/TCPLossyNetwork/src/server/server.c || cmake_object_order_depends_target_TCPLossyNetwork
+build CMakeFiles/TCPLossyNetwork.dir/src/receiver/receiver.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/src/receiver/receiver.c || cmake_object_order_depends_target_TCPLossyNetwork
   DEFINES = -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
-  DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/server/server.c.o.d
+  DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/receiver/receiver.c.o.d
   FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings
-  INCLUDES = -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include
+  INCLUDES = -I/Users/hansollee/Desktop/Project/source/TCPLossyNetwork/include
   OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
-  OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src/server
+  OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src/receiver
 
-build CMakeFiles/TCPLossyNetwork.dir/src/utils.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/CLionProjects/TCPLossyNetwork/src/utils.c || cmake_object_order_depends_target_TCPLossyNetwork
+build CMakeFiles/TCPLossyNetwork.dir/src/proxy/proxy.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/src/proxy/proxy.c || cmake_object_order_depends_target_TCPLossyNetwork
+  DEFINES = -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
+  DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/proxy/proxy.c.o.d
+  FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings
+  INCLUDES = -I/Users/hansollee/Desktop/Project/source/TCPLossyNetwork/include
+  OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
+  OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src/proxy
+
+build CMakeFiles/TCPLossyNetwork.dir/src/utils.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/src/utils.c || cmake_object_order_depends_target_TCPLossyNetwork
   DEFINES = -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
   DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/utils.c.o.d
   FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings
-  INCLUDES = -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include
+  INCLUDES = -I/Users/hansollee/Desktop/Project/source/TCPLossyNetwork/include
   OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
   OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src
 
-build CMakeFiles/TCPLossyNetwork.dir/src/error.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/CLionProjects/TCPLossyNetwork/src/error.c || cmake_object_order_depends_target_TCPLossyNetwork
+build CMakeFiles/TCPLossyNetwork.dir/src/error.c.o: C_COMPILER__TCPLossyNetwork_Debug /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/src/error.c || cmake_object_order_depends_target_TCPLossyNetwork
   DEFINES = -D_DARWIN_C_SOURCE -D_POSIX_C_SOURCE=200809L -D_XOPEN_SOURCE=700
   DEP_FILE = CMakeFiles/TCPLossyNetwork.dir/src/error.c.o.d
   FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -Wall -Wextra -Wpedantic -Wshadow -Wstrict-overflow=4 -Wswitch-default -Wswitch-enum -Wunused -Wunused-macros -Wdate-time -Winvalid-pch -Wmissing-declarations -Wmissing-include-dirs -Wmissing-prototypes -Wstrict-prototypes -Wundef -Wnull-dereference -Wstack-protector -Wdouble-promotion -Wvla -Walloca -Woverlength-strings -Wdisabled-optimization -Winline -Wcast-qual -Wfloat-equal -Wformat=2 -Wfree-nonheap-object -Wshift-overflow -Wwrite-strings
-  INCLUDES = -I/Users/hansollee/CLionProjects/TCPLossyNetwork/include
+  INCLUDES = -I/Users/hansollee/Desktop/Project/source/TCPLossyNetwork/include
   OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
   OBJECT_FILE_DIR = CMakeFiles/TCPLossyNetwork.dir/src
 
@@ -108,7 +116,7 @@ build CMakeFiles/TCPLossyNetwork.dir/src/error.c.o: C_COMPILER__TCPLossyNetwork_
 #############################################
 # Link the executable TCPLossyNetwork
 
-build TCPLossyNetwork: C_EXECUTABLE_LINKER__TCPLossyNetwork_Debug CMakeFiles/TCPLossyNetwork.dir/src/main.c.o CMakeFiles/TCPLossyNetwork.dir/src/conversion.c.o CMakeFiles/TCPLossyNetwork.dir/src/client/client.c.o CMakeFiles/TCPLossyNetwork.dir/src/server/server.c.o CMakeFiles/TCPLossyNetwork.dir/src/utils.c.o CMakeFiles/TCPLossyNetwork.dir/src/error.c.o || doxygen
+build TCPLossyNetwork: C_EXECUTABLE_LINKER__TCPLossyNetwork_Debug CMakeFiles/TCPLossyNetwork.dir/src/main.c.o CMakeFiles/TCPLossyNetwork.dir/src/conversion.c.o CMakeFiles/TCPLossyNetwork.dir/src/sender/sender.c.o CMakeFiles/TCPLossyNetwork.dir/src/receiver/receiver.c.o CMakeFiles/TCPLossyNetwork.dir/src/proxy/proxy.c.o CMakeFiles/TCPLossyNetwork.dir/src/utils.c.o CMakeFiles/TCPLossyNetwork.dir/src/error.c.o || doxygen
   FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk
   OBJECT_DIR = CMakeFiles/TCPLossyNetwork.dir
   POST_BUILD = :
@@ -121,7 +129,7 @@ build TCPLossyNetwork: C_EXECUTABLE_LINKER__TCPLossyNetwork_Debug CMakeFiles/TCP
 # Utility command for edit_cache
 
 build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
-  COMMAND = cd /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug && /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+  COMMAND = cd /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/cmake-build-debug && /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
   DESC = No interactive CMake dialog available...
   restat = 1
 
@@ -132,7 +140,7 @@ build edit_cache: phony CMakeFiles/edit_cache.util
 # Utility command for rebuild_cache
 
 build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
-  COMMAND = cd /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug && /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake --regenerate-during-build -S/Users/hansollee/CLionProjects/TCPLossyNetwork -B/Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug
+  COMMAND = cd /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/cmake-build-debug && /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake --regenerate-during-build -S/Users/hansollee/Desktop/Project/source/TCPLossyNetwork -B/Users/hansollee/Desktop/Project/source/TCPLossyNetwork/cmake-build-debug
   DESC = Running CMake to regenerate build system...
   pool = console
   restat = 1
@@ -144,7 +152,7 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # Custom command for CMakeFiles/doxygen
 
 build CMakeFiles/doxygen | ${cmake_ninja_workdir}CMakeFiles/doxygen: CUSTOM_COMMAND Doxyfile.doxygen ../include/conversion.h ../include/error.h
-  COMMAND = cd /Users/hansollee/CLionProjects/TCPLossyNetwork && /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E make_directory /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug && /usr/local/bin/doxygen /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug/Doxyfile.doxygen
+  COMMAND = cd /Users/hansollee/Desktop/Project/source/TCPLossyNetwork && /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E make_directory /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/cmake-build-debug && /usr/local/bin/doxygen /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/cmake-build-debug/Doxyfile.doxygen
   DESC = Generating Doxygen documentation for v1
 
 # =============================================================================
@@ -156,7 +164,7 @@ build CMakeFiles/doxygen | ${cmake_ninja_workdir}CMakeFiles/doxygen: CUSTOM_COMM
 # =============================================================================
 
 #############################################
-# Folder: /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug
+# Folder: /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/cmake-build-debug
 
 build all: phony TCPLossyNetwork
 

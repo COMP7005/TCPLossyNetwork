@@ -1,4 +1,4 @@
-# Install script for directory: /Users/hansollee/CLionProjects/TCPLossyNetwork
+# Install script for directory: /Users/hansollee/Desktop/Project/source/TCPLossyNetwork
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/hansollee/Desktop/Project/source/TCPLossyNetwork/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

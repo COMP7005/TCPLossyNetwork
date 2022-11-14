@@ -7,8 +7,9 @@ set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 set(SOURCE_LIST ${SOURCE_DIR}/main.c
         ${SOURCE_DIR}/conversion.c
-        ${SOURCE_DIR}/client/client.c
-        ${SOURCE_DIR}/server/server.c
+        ${SOURCE_DIR}/sender/sender.c
+        ${SOURCE_DIR}/receiver/receiver.c
+        ${SOURCE_DIR}/proxy/proxy.c
         ${SOURCE_DIR}/utils.c
         ${SOURCE_DIR}/conversion.c
         ${SOURCE_DIR}/error.c)

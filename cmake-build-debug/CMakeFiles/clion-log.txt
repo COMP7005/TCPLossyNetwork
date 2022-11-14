@@ -1,4 +1,4 @@
-/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/ninja -G Ninja -S /Users/hansollee/CLionProjects/TCPLossyNetwork -B /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/ninja -G Ninja -S /Users/hansollee/Desktop/Project/source/TCPLossyNetwork -B /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/cmake-build-debug
 -- Configuring done
 -- Generating done
--- Build files have been written to: /Users/hansollee/CLionProjects/TCPLossyNetwork/cmake-build-debug
+-- Build files have been written to: /Users/hansollee/Desktop/Project/source/TCPLossyNetwork/cmake-build-debug
