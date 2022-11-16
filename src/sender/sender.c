@@ -9,10 +9,11 @@
 #include <arpa/inet.h>
 #include <stdbool.h>
 
-typedef struct fileInfo {
-    char fname[NAME_MAX + 1];
-    long fsize;
-} file_info;
+typedef struct tcp_info {
+    int seq;
+    int ack;
+    int fin;
+} tcp_info;
 
 struct senderOptions
 {
@@ -26,10 +27,11 @@ struct senderOptions
 static void send_file(FILE *fp, char *fname, int sockfd);
 static void options_init(struct senderOptions *opts);
 static void parse_sender_arguments(int argc, char *argv[], struct senderOptions *opts);
+static int check_ack_respond(int receiverSocket);
 
 #define DEFAULT_PORT 5000
 #define SIZE 1024
-#define TCP_SIZE 6
+#define WINDOW_SIZE 6
 const char* files[20];
 
 int main (int argc, char *argv[]) {
@@ -72,12 +74,6 @@ int main (int argc, char *argv[]) {
         send_file(fp, fname, receiverSocket);
     }
 
-    // Indicates end of files.
-//    file_info info;
-//    strcpy(info.fname, "");
-//    info.fsize = 0;
-//    write(receiverSocket, &info, sizeof(info));
-
     close(receiverSocket);
     printf("[+]sent data successfully.\n");
 
@@ -97,40 +93,73 @@ void send_file(FILE *file, char *fname, int receiverSocket) {
     char* buffer;
     long numbytes;
 
+    if (!file)
+        error_message(__FILE__, __func__ , __LINE__, "Cannot read the file", 7);
+
     fseek(file, 0L, SEEK_END);
     numbytes = ftell(file);
     fseek(file, 0L, SEEK_SET);
 
-    file_info info;
-    strcpy(info.fname, fname);
-    info.fsize = numbytes;
+    tcp_info tcpInfo;
+    tcpInfo.ack = 1;
+    tcpInfo.seq = 1;
+    tcpInfo.fin = 0;
 
-//    write(receiverSocket, &info, sizeof(info));
+    write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
 
     buffer = (char*)calloc(numbytes, sizeof(char));
 
     if (buffer == NULL)
         EXIT_FAILURE;
 
-    if (file) {
-        //send data
-        while (fread(buffer, sizeof *buffer, TCP_SIZE, file) == TCP_SIZE) {
-            printf("sending.. %s\n", buffer);
-            write(receiverSocket, buffer, TCP_SIZE+1);
-        }
+    int fileSendingTotalCount = numbytes/WINDOW_SIZE;
 
-        fclose(file);
+    int sentCnt = 0;
+    while (sentCnt <= fileSendingTotalCount){
+        ++sentCnt;
+
+        //read file
+        fread(buffer, sizeof *buffer, WINDOW_SIZE, file);
+
+        printf("Sending....");
+        //write to receiver
+        write(receiverSocket, buffer, WINDOW_SIZE+1);
+        printf("%s\n", buffer);
+
+        check_ack_respond(receiverSocket);
+        write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
+
+        printf("-----------\n");
     }
 
-    //Read response from server
-    char response[1024];
-    memset(response, 0, sizeof(response));
-    if (read(receiverSocket, response, sizeof(response)) < 0) {
-        error_message(__FILE__, __func__ , __LINE__, "Cannot read", 7);
-    }
-    printf("Received: %s\n", response);
+    //let receiver know finished.
+    tcpInfo.ack = 1;
+    tcpInfo.seq = 1;
+    tcpInfo.fin = 1;
+    write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
 
+    fclose(file);
     free(buffer);
+}
+
+static int check_ack_respond(int receiverSocket){
+    char response[10];
+    memset(response, 0, sizeof(response));
+
+    if (read(receiverSocket, response, sizeof(response)) < 0){
+        printf("-------error\n");
+    }
+
+    printf("received %s\n", response);
+//    if (strstr(response, "ACK"))
+//    {
+//        return EXIT_SUCCESS;
+//    }
+//    else
+//    {
+//        return EXIT_FAILURE;
+//    }
+    return 1;
 }
 
 static void parse_sender_arguments(int argc, char *argv[], struct senderOptions *opts)

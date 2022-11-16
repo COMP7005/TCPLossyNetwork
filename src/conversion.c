@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 
 in_port_t parse_port(const char *buff, int radix)
@@ -49,4 +50,22 @@ in_port_t parse_port(const char *buff, int radix)
     port = (in_port_t)sl;
 
     return port;
+}
+
+
+int atoi(const char* str)
+{
+    int num = 0;
+    int i = 0;
+    bool isNegetive = false;
+    if(str[i] == '-'){
+        isNegetive = true;
+        i++;
+    }
+    while (str[i] && (str[i] >= '0' && str[i] <= '9')){
+        num = num * 10 + (str[i] - '0');
+        i++;
+    }
+    if(isNegetive) num = -1 * num;
+    return num;
 }
