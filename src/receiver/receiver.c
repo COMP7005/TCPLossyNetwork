@@ -9,10 +9,11 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-typedef struct fileInfo {
-    char fname[NAME_MAX + 1];
-    long fsize;
-} file_info;
+typedef struct tcp_info {
+    int seq;
+    int ack;
+    int fin;
+} tcp_info;
 
 struct receiverOptions
 {
@@ -24,10 +25,11 @@ static void options_init(struct receiverOptions *opts);
 static void parse_receiver_arguments(int argc, char *argv[], struct receiverOptions *opts);
 static int read_file(int newSocket, struct receiverOptions *opts);
 
-#define TCP_SIZE 20
+#define WINDOW_SIZE 20
 #define SIZE 1024
 #define DEFAULT_PORT 5000
 #define MAX_PENDING 10
+
 
 int main (int argc, char *argv[]) {
     struct receiverOptions opts;
@@ -78,14 +80,17 @@ int main (int argc, char *argv[]) {
 
         printf("[+]Connection accept from %s:%d\n", opts.ip_in, opts.port_in);
 
-        if (read_file(newSocket, &opts) == 0) {
-            char buf[5] = "ACK";
-            write(newSocket, buf, TCP_SIZE+1);
-        }
+        if ((childip = fork()) == 0) {
+            close(sockfd);
 
-        close(newSocket);
+            if (read_file(newSocket, &opts) == 0) {
+                printf("[+]Finished.\n");
+                break;
+            }
+        }
     }
 
+    close(newSocket);
     close(sockfd);
     return EXIT_SUCCESS;
 }
@@ -114,13 +119,22 @@ static void parse_receiver_arguments(int argc, char *argv[], struct receiverOpti
 }
 
 static int read_file(int newSocket, struct receiverOptions *opts) {
+    while (1) {
+        tcp_info tcpInfo;
+        read(newSocket, &tcpInfo, sizeof(tcp_info));
 
-    char buffer[SIZE];
-    //Get the content
-    read(newSocket, buffer, TCP_SIZE+1);
+        if (tcpInfo.fin == 1)
+            break;
 
-    printf("%s \n",  buffer);
+        char buffer[SIZE];
+        //received date
+        read(newSocket, buffer, WINDOW_SIZE);
 
+        printf("%s \n", buffer);
+
+        //send ACK
+        write(newSocket, "ACK", 4);
+    }
     return EXIT_SUCCESS;
 }
 
