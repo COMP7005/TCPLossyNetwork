@@ -124,13 +124,21 @@ static int read_data(int newSocket, struct receiverOptions *opts) {
         struct tcpInfo tcpInfo;
 
         read(newSocket, &tcpInfo, sizeof(tcpInfo));
-        printf("%d", tcpInfo.fin);
-        printf("%s \n", tcpInfo.data);
+
         if (tcpInfo.fin == 1)
             break;
 
+        printf("Received: %s \n", tcpInfo.data);
+
+        // Sending ACK
+        struct tcpInfo tcpInfo2;
+        tcpInfo2.ack = 0;
+        tcpInfo2.seq = 0;
+        tcpInfo2.fin = 0;
+        strcpy(tcpInfo2.data, "ACK");
+
         //send ACK
-        write(newSocket, "ACK", 4);
+        write(newSocket, &tcpInfo2, sizeof(tcpInfo2));
     }
     return EXIT_SUCCESS;
 }

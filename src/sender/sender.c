@@ -156,15 +156,14 @@ static void send_file(FILE *file, char *fname, int receiverSocket, FILE *sender_
 }
 
 static int check_ack_respond(int receiverSocket, FILE *sender_fp, struct dataRecord *record){
-    char response[10];
-    memset(response, 0, sizeof(response));
+    int bytes = 0;
+    struct tcpInfo tcpInfo;
 
-    if (read(receiverSocket, response, sizeof(response)) < 0){
-        printf("-------error\n");
-    }
+    read(receiverSocket, &tcpInfo, sizeof(tcpInfo));
+    
+    printf("[received]: %s\n", tcpInfo.data);
 
-    printf("[received]: %s\n", response);
-    write_to_file(sender_fp, response, record->ackCnt++); //
+    write_to_file(sender_fp, tcpInfo.data, record->ackCnt++); //
 //    if (strstr(response, "ACK"))
 //    {
 //        return EXIT_SUCCESS;
