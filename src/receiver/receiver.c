@@ -9,11 +9,12 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-typedef struct tcp_info {
+struct tcpInfo {
     int seq;
     int ack;
     int fin;
-} tcp_info;
+    char data[NAME_MAX];
+};
 
 struct receiverOptions
 {
@@ -23,7 +24,7 @@ struct receiverOptions
 
 static void options_init(struct receiverOptions *opts);
 static void parse_receiver_arguments(int argc, char *argv[], struct receiverOptions *opts);
-static int read_file(int newSocket, struct receiverOptions *opts);
+static int read_data(int newSocket, struct receiverOptions *opts);
 
 #define WINDOW_SIZE 20
 #define SIZE 1024
@@ -83,7 +84,7 @@ int main (int argc, char *argv[]) {
         if ((childip = fork()) == 0) {
             close(sockfd);
 
-            if (read_file(newSocket, &opts) == 0) {
+            if (read_data(newSocket, &opts) == 0) {
                 printf("[+]Finished.\n");
                 break;
             }
@@ -118,19 +119,15 @@ static void parse_receiver_arguments(int argc, char *argv[], struct receiverOpti
     printf("[+]Port: %hu\n", opts->port_in);
 }
 
-static int read_sender_sent(int newSocket, struct receiverOptions *opts) {
+static int read_data(int newSocket, struct receiverOptions *opts) {
     while (1) {
-        tcp_info tcpInfo;
-        read(newSocket, &tcpInfo, sizeof(tcp_info));
+        struct tcpInfo tcpInfo;
 
+        read(newSocket, &tcpInfo, sizeof(tcpInfo));
+        printf("%d", tcpInfo.fin);
+        printf("%s \n", tcpInfo.data);
         if (tcpInfo.fin == 1)
             break;
-
-        char buffer[SIZE];
-        //received date
-        read(newSocket, buffer, WINDOW_SIZE);
-
-        printf("%s \n", buffer);
 
         //send ACK
         write(newSocket, "ACK", 4);
