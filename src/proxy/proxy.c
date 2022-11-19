@@ -19,8 +19,8 @@ struct proxyOptions
     int drop_ack_per;
     char *sender_ip;
     char *receiver_ip;
-    in_port_t port_in;
-    in_port_t port_out;
+    in_port_t server_port;
+    in_port_t proxy_port;
 
     int sender_fd;
 };
@@ -41,8 +41,8 @@ int main (int argc, char *argv[]) {
 
     pthread_t tid;
 
-    printf("server IP : %s and port %hu " , opts.receiver_ip, opts.port_in);
-    printf("proxy port is %hu", opts.port_out);
+    printf("server IP : %s and port %hu " , opts.receiver_ip, opts.server_port);
+    printf("proxy port is %hu", opts.proxy_port);
     printf("\n");
 
     //socket variables
@@ -64,7 +64,7 @@ int main (int argc, char *argv[]) {
 
     // set socket variables
     proxy_sd.sin_family = AF_INET;
-    proxy_sd.sin_port = htons(opts.port_in);
+    proxy_sd.sin_port = htons(opts.proxy_port);
     proxy_sd.sin_addr.s_addr = htonl(INADDR_ANY);
 
     // bind the socket
@@ -121,7 +121,7 @@ static void connect_receiver(struct proxyOptions *opts)
     memset(&receiver_sd, 0, sizeof(receiver_sd));
     // set socket variables
     receiver_sd.sin_family = AF_INET;
-    receiver_sd.sin_port = htons(opts->port_out);
+    receiver_sd.sin_port = htons(opts->server_port);
     receiver_sd.sin_addr.s_addr = inet_addr(opts->receiver_ip);
 
     //connect to main server from this proxy server
@@ -174,13 +174,13 @@ static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *o
             case 'i': //port in
             {
                 // This is server port => proxy will connect to server with this port
-                opts->port_in = parse_port(optarg, 10);
+                opts->server_port = parse_port(optarg, 10);
                 break;
             }
             case 'o': //port out
             {
                 // This is proxt port => sender will connect with this port
-                opts->port_out = parse_port(optarg, 10);
+                opts->proxy_port = parse_port(optarg, 10);
                 break;
             }
             case 'd': //drop data percentage
