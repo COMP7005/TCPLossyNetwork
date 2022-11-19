@@ -1,0 +1,37 @@
+[0]: text1 
+[0]: ACK
+[1]: text2 
+[1]: ACK
+[2]: text3 
+[2]: ACK
+[3]: text4 
+[3]: ACK
+[4]: text5 
+[4]: ACK
+[0]: text1 
+[0]: ACK
+[1]: text2 
+[1]: ACK
+[2]: text3 
+[2]: ACK
+[3]: text4 
+[3]: ACK
+[4]: text5
+
+[4]: ACK
+[5]: hello
+
+[5]: ACK
+[6]: hi
+i
+a
+[6]: ACK
+[7]: m
+hans
+[7]: ACK
+[8]: ol
+lee
+[8]: ACK
+[9]: ol
+lee
+[9]: ACK
