@@ -118,7 +118,7 @@ static void parse_receiver_arguments(int argc, char *argv[], struct receiverOpti
     printf("[+]Port: %hu\n", opts->port_in);
 }
 
-static int read_file(int newSocket, struct receiverOptions *opts) {
+static int read_sender_sent(int newSocket, struct receiverOptions *opts) {
     while (1) {
         tcp_info tcpInfo;
         read(newSocket, &tcpInfo, sizeof(tcp_info));

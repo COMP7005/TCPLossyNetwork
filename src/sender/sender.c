@@ -9,10 +9,15 @@
 #include <arpa/inet.h>
 #include <stdbool.h>
 
+#define DEFAULT_PORT 5000
+#define SIZE 1024
+#define WINDOW_SIZE 6
+
 typedef struct tcp_info {
     int seq;
     int ack;
     int fin;
+    char data[WINDOW_SIZE + 1];
 } tcp_info;
 
 struct senderOptions
@@ -29,9 +34,7 @@ static void options_init(struct senderOptions *opts);
 static void parse_sender_arguments(int argc, char *argv[], struct senderOptions *opts);
 static int check_ack_respond(int receiverSocket);
 
-#define DEFAULT_PORT 5000
-#define SIZE 1024
-#define WINDOW_SIZE 6
+
 const char* files[20];
 
 int main (int argc, char *argv[]) {
@@ -105,6 +108,7 @@ void send_file(FILE *file, char *fname, int receiverSocket) {
     tcpInfo.seq = 1;
     tcpInfo.fin = 0;
 
+
     write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
 
     buffer = (char*)calloc(numbytes, sizeof(char));
@@ -159,7 +163,7 @@ static int check_ack_respond(int receiverSocket){
 //    {
 //        return EXIT_FAILURE;
 //    }
-    return 1;
+    return EXIT_SUCCESS;
 }
 
 static void parse_sender_arguments(int argc, char *argv[], struct senderOptions *opts)
