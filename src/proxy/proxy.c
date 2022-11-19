@@ -13,11 +13,12 @@
 #include <ctype.h>
 #include <limits.h>
 
-typedef struct tcp_info {
+struct tcpInfo {
     int seq;
     int ack;
     int fin;
-} tcp_info;
+    char data[NAME_MAX];
+};
 
 struct proxyOptions
 {
@@ -34,10 +35,10 @@ struct proxyOptions
 #define WINDOW_SIZE 20
 #define SIZE 1024
 
-static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *opts);
 static void options_init(struct proxyOptions *opts);
+static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *opts);
 static void connect_receiver(struct proxyOptions *opts);
-static int read_data(int targetSocket, struct proxyOptions *opts, char buffer[SIZE]);
+static void transfer_data( int senderSocket, int receiverSocket, struct proxyOptions *opts);
 
 int main (int argc, char *argv[]) {
     struct proxyOptions opts;
@@ -112,7 +113,7 @@ static void connect_receiver(struct proxyOptions *opts)
     int bytes = 0;
 
     // Connect to main server(receiver) via this proxy server
-    int receiver_fd =0;
+    int receiver_fd = 0;
     struct sockaddr_in receiver_sd;
 
     // Create a socket
@@ -138,67 +139,34 @@ static void connect_receiver(struct proxyOptions *opts)
 
     printf("[+]server socket connected\n");
     while(1) {
-        //receive data from client
-        memset(&buffer, '\0', sizeof(buffer));
-
-        printf("[+]reading data from sender \n");
-        bytes = read_data(opts->sender_fd, opts, buffer);
-
-        printf("[+]sending data to receiver \n");
-        if (bytes <= 0) {
-            printf("[-]sender data cannot be read\n");
-        }
-        else
-        {
-             // Send data to main server
-              printf("Sending...");
-              write(receiver_fd, buffer, sizeof(buffer));
-              printf("%s\n", buffer);
-              printf("sender fd is : %d\n",opts->sender_fd);
-              printf("From client :\n");
-
-//            fputs(buffer,stdout);
-//            fflush(stdout);
-        }
-
-        printf("[+]reading data to receiver \n");
-
-        printf("[+]sending data to sender \n");
-
-        //receiver response from server
-        memset(&buffer, '\0', sizeof(buffer));
-        bytes = read(receiver_fd, buffer, sizeof(buffer));
-        if (bytes <= 0) {
-        } else {
-            // send response back to client
-//            write(opts->sender_fd, buffer, sizeof(buffer));
-//            printf("From server :\n");
-//            fputs(buffer,stdout);
-        }
+        transfer_data(opts->sender_fd, receiver_fd, opts);
     }
 }
 
-static int read_data_send_to_receiver
+static void transfer_data
 (
     int senderSocket,
     int receiverSocket,
-    struct proxyOptions *opts,
-    char buffer[SIZE])
+    struct proxyOptions *opts)
 {
-    int bytes = 0;
-    tcp_info tcpInfo;
-    bytes = read(senderSocket, &tcpInfo, sizeof(tcp_info));
-    if (bytes <= 0)
+    int bytes1 = 0, bytes2 = 0;
+    struct tcpInfo tcpInfo;
+    bytes1 = read(senderSocket, &tcpInfo, sizeof(tcpInfo));
+    if (bytes1 <= 0)
     {
         printf("[-]cannot read Data\n");
     }
-    write(receiverSocket, buffer, WINDOW_SIZE+1);
+    printf("[+]Proxy received from \"Sender\": %s\n", tcpInfo.data);
 
+    write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
+    printf("[+]Proxy send to \"Receiver\": %s\n\n", tcpInfo.data);
 
-    //received date
-    bytes =  read(targetSocket, buffer, WINDOW_SIZE);
-    printf("read Data: %s\n", buffer);
-    return bytes;
+    bytes2 = read(receiverSocket, &tcpInfo, sizeof(tcpInfo));
+    printf("[+]Proxy received from \"Receiver\": %s\n", tcpInfo.data);
+
+    write(senderSocket, &tcpInfo, sizeof(tcpInfo));
+    printf("[+]Proxy send to \"Sender\": %s\n\n", tcpInfo.data);
+
 }
 
 static int check_ack_respond(int receiverSocket){
@@ -213,42 +181,6 @@ static int check_ack_respond(int receiverSocket){
     return EXIT_SUCCESS;
 }
 
-//
-//static int send_data(int targetSocket, struct proxyOptions *opts) {
-//    // Send TCP info
-//    tcp_info tcpInfo;
-//    tcpInfo.ack = 1;
-//    tcpInfo.seq = 1;
-//    tcpInfo.fin = 0;
-//
-//    write(targetSocket, &tcpInfo, sizeof(tcpInfo));
-//
-//    buffer = (char*)calloc(numbytes, sizeof(char));
-//
-//    if (buffer == NULL)
-//        EXIT_FAILURE;
-//
-//    int fileSendingTotalCount = numbytes/WINDOW_SIZE;
-//
-//    int sentCnt = 0;
-//    while (sentCnt <= fileSendingTotalCount){
-//        ++sentCnt;
-//
-//        //read file
-//        fread(buffer, sizeof *buffer, WINDOW_SIZE, file);
-//
-//        printf("Sending....");
-//        //write to receiver
-//        write(receiverSocket, buffer, WINDOW_SIZE+1);
-//        printf("%s\n", buffer);
-//
-//        check_ack_respond(receiverSocket);
-//        write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
-//
-//        printf("-----------\n");
-//    }
-//    return EXIT_SUCCESS;
-//}
 
 static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *opts)
 {
