@@ -17,7 +17,9 @@ typedef struct tcp_info {
     int seq;
     int ack;
     int fin;
-    char data[WINDOW_SIZE + 1];
+    int pshCnt;
+    int ackCnt;
+    char *data;
 } tcp_info;
 
 struct senderOptions
@@ -29,24 +31,27 @@ struct senderOptions
     int file_cnt;
 };
 
-static void send_file(FILE *fp, char *fname, int sockfd);
-static void options_init(struct senderOptions *opts);
+static void send_file(FILE *fp, char *fname, int sockfd, FILE *sender_fp, struct tcp_info *tcpInfo);
+static void options_init(struct senderOptions *opts, struct tcp_info *tcpInfo);
 static void parse_sender_arguments(int argc, char *argv[], struct senderOptions *opts);
-static int check_ack_respond(int receiverSocket);
+static int check_ack_respond(int receiverSocket, FILE *sender_fp, struct tcp_info *tcpInfo);
+static void write_to_file(FILE *fp, char* data, int counter);
 
 
 const char* files[20];
 
 int main (int argc, char *argv[]) {
     struct senderOptions opts;
+    struct tcp_info tcpInfo;
 
-    options_init(&opts);
+    options_init(&opts, &tcpInfo);
     parse_sender_arguments(argc, argv, &opts);
 
     int receiverSocket, ret;
     struct sockaddr_in serverAddr;
 
     FILE *fp;
+    FILE *sender_fp;
 
     receiverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (receiverSocket < 0) {
@@ -73,8 +78,8 @@ int main (int argc, char *argv[]) {
         char *fname = (char*) malloc(sizeof(files[i])+1);
         strcpy(fname, files[i]);
 
-        printf("[+]Sending: %s....\n", fname);
-        send_file(fp, fname, receiverSocket);
+        printf("[+]Sending: %s....\n\n", fname);
+        send_file(fp, fname, receiverSocket, sender_fp, &tcpInfo);
     }
 
     close(receiverSocket);
@@ -83,16 +88,16 @@ int main (int argc, char *argv[]) {
     return EXIT_SUCCESS;
 }
 
-static void options_init(struct senderOptions *opts)
+
+
+static void write_to_file(FILE *fp, char* data, int counter)
 {
-    memset(opts, 0, sizeof(struct senderOptions));
-    opts->proxy_ip = "127.0.0.1"; //default localhost
-    opts->receiver_ip = "127.0.0.1"; //default localhost
-    opts->sending_ip = "127.0.0.1"; //default localhost
-    opts->port  = DEFAULT_PORT;
+    fp = fopen("sender_info.csv", "a");
+    fprintf(fp, "[%d]: %s\n", counter, data);
+    fclose(fp);
 }
 
-void send_file(FILE *file, char *fname, int receiverSocket) {
+static void send_file(FILE *file, char *fname, int receiverSocket, FILE *sender_fp, struct tcp_info *tcpInfo) {
     char* buffer;
     long numbytes;
 
@@ -103,13 +108,6 @@ void send_file(FILE *file, char *fname, int receiverSocket) {
     numbytes = ftell(file);
     fseek(file, 0L, SEEK_SET);
 
-    tcp_info tcpInfo;
-    tcpInfo.ack = 1;
-    tcpInfo.seq = 1;
-    tcpInfo.fin = 0;
-
-
-    write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
 
     buffer = (char*)calloc(numbytes, sizeof(char));
 
@@ -117,36 +115,47 @@ void send_file(FILE *file, char *fname, int receiverSocket) {
         EXIT_FAILURE;
 
     int fileSendingTotalCount = numbytes/WINDOW_SIZE;
-
     int sentCnt = 0;
+
     while (sentCnt <= fileSendingTotalCount){
         ++sentCnt;
 
         //read file
         fread(buffer, sizeof *buffer, WINDOW_SIZE, file);
 
-        printf("Sending....");
-        //write to receiver
-        write(receiverSocket, buffer, WINDOW_SIZE+1);
-        printf("%s\n", buffer);
+//        tcpInfo->ack = 0;
+//        tcpInfo->seq = 0;
+//        tcpInfo->fin = 0;
+//        tcpInfo->pshCnt = 0;
+//        tcpInfo->ackCnt = 0;
+        tcpInfo->data = buffer;
 
-        check_ack_respond(receiverSocket);
+        printf("[Sending]: ");
         write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
 
-        printf("-----------\n");
+        //write to receiver
+        printf("%s\n", buffer);
+
+        write_to_file(sender_fp, buffer, tcpInfo->pshCnt++);
+        check_ack_respond(receiverSocket, sender_fp, tcpInfo);
+
+        write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
+        printf("\n-----------\n\n");
     }
 
-    //let receiver know finished.
-    tcpInfo.ack = 1;
-    tcpInfo.seq = 1;
-    tcpInfo.fin = 1;
+    //Tell finished
+//    tcpInfo->ack = 0;
+//    tcpInfo->seq = 0;
+    tcpInfo->fin = 1;
+    tcpInfo->data = NULL;
+
     write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
 
     fclose(file);
     free(buffer);
 }
 
-static int check_ack_respond(int receiverSocket){
+static int check_ack_respond(int receiverSocket, FILE *sender_fp, struct tcp_info *tcpInfo){
     char response[10];
     memset(response, 0, sizeof(response));
 
@@ -154,7 +163,8 @@ static int check_ack_respond(int receiverSocket){
         printf("-------error\n");
     }
 
-    printf("received %s\n", response);
+    printf("[received]: %s\n", response);
+    write_to_file(sender_fp, response, tcpInfo->ackCnt++); //
 //    if (strstr(response, "ACK"))
 //    {
 //        return EXIT_SUCCESS;
@@ -227,3 +237,20 @@ static void parse_sender_arguments(int argc, char *argv[], struct senderOptions 
     opts->file_cnt = count;
 }
 
+static void options_init(struct senderOptions *opts, struct tcp_info *tcpInfo)
+{
+    memset(opts, 0, sizeof(struct senderOptions));
+    memset(tcpInfo, 0, sizeof(struct tcp_info));
+
+    opts->proxy_ip = "127.0.0.1"; //default localhost
+    opts->receiver_ip = "127.0.0.1"; //default localhost
+    opts->sending_ip = "127.0.0.1"; //default localhost
+    opts->port  = DEFAULT_PORT;
+
+    tcpInfo->ack = 0;
+    tcpInfo->seq = 0;
+    tcpInfo->fin = 0;
+    tcpInfo->pshCnt = 0;
+    tcpInfo->ackCnt = 0;
+    tcpInfo->data = NULL;
+}
