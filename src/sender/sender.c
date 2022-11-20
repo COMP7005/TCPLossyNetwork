@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <stdbool.h>
 
+
 #define DEFAULT_PORT 5000
 #define SIZE 1024
 #define WINDOW_SIZE 6
@@ -37,11 +38,16 @@ struct senderOptions
 static void options_init(struct senderOptions *opts, struct dataRecord *record);
 static void parse_sender_arguments(int argc, char *argv[], struct senderOptions *opts);
 static void send_file(FILE *fp, char *fname, int sockfd, FILE *sender_fp, struct  dataRecord *record);
-static int check_ack_respond(int receiverSocket, FILE *sender_fp, struct dataRecord *record);
+static void check_ack_respond(int receiverSocket, FILE *sender_fp, struct dataRecord *record);
 static void write_to_file(FILE *fp, char* data, int counter);
-
+void sigalrm_handler(int);
 
 const char* files[20];
+bool is_ack_receiver = false;
+
+# define T 5
+
+int flag = T;
 
 int main (int argc, char *argv[]) {
     struct senderOptions opts;
@@ -91,13 +97,23 @@ int main (int argc, char *argv[]) {
     return EXIT_SUCCESS;
 }
 
-
-
 static void write_to_file(FILE *fp, char* data, int counter)
 {
     fp = fopen("sender_info.csv", "a");
     fprintf(fp, "[%d]: %s\n", counter, data);
     fclose(fp);
+}
+
+void sigalrm_handler(int sig)
+{
+    if(--flag){
+        printf("Hi...\n");   /*version 1*/
+        /*printf("Hi...");*/ /*version 2*/
+    }else{
+        printf("BYE\n");
+        flag=T;
+    }
+    alarm(1);
 }
 
 static void send_file(FILE *file, char *fname, int receiverSocket, FILE *sender_fp, struct  dataRecord *record) {
@@ -118,34 +134,44 @@ static void send_file(FILE *file, char *fname, int receiverSocket, FILE *sender_
 
     int fileSendingTotalCount = numbytes/WINDOW_SIZE;
     int sentCnt = 0;
+    int seqCnt = 0;
     struct tcpInfo tcpInfo;
     while (sentCnt <= fileSendingTotalCount){
-
         ++sentCnt;
 
         //read file
         fread(buffer, sizeof *buffer, WINDOW_SIZE, file);
 
         printf("[Sending]: ");
-        tcpInfo.ack = 0;
-        tcpInfo.seq = 0;
+        tcpInfo.ack = 1;
+        tcpInfo.seq = seqCnt;
         tcpInfo.fin = 0;
 
         strcpy(tcpInfo.data, buffer);
         printf("%s\n", tcpInfo.data);
 
         write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
-
-        //write to receiver
         write_to_file(sender_fp, buffer, record->pshCnt++);
-        check_ack_respond(receiverSocket, sender_fp, record);
+        seqCnt = seqCnt + WINDOW_SIZE;
+
+        signal(SIGALRM, sigalrm_handler);
+        alarm (1);
+
+        while(1) {
+            is_ack_receiver = false;
+            check_ack_respond(receiverSocket, sender_fp, record);
+            if (is_ack_receiver)
+                break;
+            write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
+        }
+
 
         printf("\n-----------\n\n");
     }
 
-    //Tell finished
-    tcpInfo.ack = 0;
-    tcpInfo.seq = 0;
+    //send fin data
+    tcpInfo.ack = 1;
+    tcpInfo.seq = seqCnt;
     tcpInfo.fin = 1;
     strcpy(tcpInfo.data, "");
 
@@ -155,24 +181,18 @@ static void send_file(FILE *file, char *fname, int receiverSocket, FILE *sender_
     free(buffer);
 }
 
-static int check_ack_respond(int receiverSocket, FILE *sender_fp, struct dataRecord *record){
+
+static void check_ack_respond(int receiverSocket, FILE *sender_fp, struct dataRecord *record){
     int bytes = 0;
     struct tcpInfo tcpInfo;
 
-    read(receiverSocket, &tcpInfo, sizeof(tcpInfo));
-    
-    printf("[received]: %s\n", tcpInfo.data);
+    bytes = read(receiverSocket, &tcpInfo, sizeof(tcpInfo));
 
-    write_to_file(sender_fp, tcpInfo.data, record->ackCnt++); //
-//    if (strstr(response, "ACK"))
-//    {
-//        return EXIT_SUCCESS;
-//    }
-//    else
-//    {
-//        return EXIT_FAILURE;
-//    }
-    return EXIT_SUCCESS;
+    if (bytes > 0 ) {
+        is_ack_receiver = true;
+        printf("[received]: %s\n", tcpInfo.data);
+        write_to_file(sender_fp, tcpInfo.data, record->ackCnt++);
+    }
 }
 
 static void parse_sender_arguments(int argc, char *argv[], struct senderOptions *opts)
