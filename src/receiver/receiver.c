@@ -140,9 +140,9 @@ static int read_data(int newSocket, struct receiverOptions *opts) {
 
         printf("Received: %s \n", tcpInfo.data);
 
-        //TESTING
-        if (i == 2)
-            continue;
+//        //TESTING
+//        if (i == 2)
+//            continue;
 
         //Sending ACK
         tcpInfo2.ack = 0;

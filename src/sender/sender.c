@@ -7,7 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <stdbool.h>
+#include <time.h>
 
 
 #define DEFAULT_PORT 5000
@@ -38,26 +38,26 @@ struct senderOptions
 static void options_init(struct senderOptions *opts, struct dataRecord *record);
 static void parse_sender_arguments(int argc, char *argv[], struct senderOptions *opts);
 static void send_file(FILE *fp, char *fname, int sockfd, FILE *sender_fp, struct  dataRecord *record);
-static void check_ack_respond(int receiverSocket, FILE *sender_fp, struct dataRecord *record);
+static void check_ack_respond(int receiverSocket, FILE *sender_fp, struct tcpInfo *tcpSend, struct dataRecord *record);
+static void send_fin_data(int receiverSocket, struct tcpInfo tcpSend, int seqCnt);
 static void write_to_file(FILE *fp, char* data, int counter);
-void sigalrm_handler(int);
 
 const char* files[20];
-bool is_ack_receiver = false;
-
-# define T 5
-
-int flag = T;
+int timeout = 3;
 
 int main (int argc, char *argv[]) {
     struct senderOptions opts;
     struct dataRecord record;
+    struct timeval tv;
 
     options_init(&opts, &record);
     parse_sender_arguments(argc, argv, &opts);
 
     int receiverSocket, ret;
     struct sockaddr_in serverAddr;
+
+    tv.tv_sec = timeout;
+    tv.tv_usec = 0;
 
     FILE *fp;
     FILE *sender_fp;
@@ -66,6 +66,9 @@ int main (int argc, char *argv[]) {
     if (receiverSocket < 0) {
         error_errno(__FILE__, __func__ , __LINE__, errno, 2);
     }
+
+    //set timer for receiver method.
+    setsockopt(receiverSocket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct timeval));
     printf("[+]Client socket is created.\n");
 
     memset(&serverAddr, '\0', sizeof(serverAddr));
@@ -104,21 +107,10 @@ static void write_to_file(FILE *fp, char* data, int counter)
     fclose(fp);
 }
 
-void sigalrm_handler(int sig)
-{
-    if(--flag){
-        printf("Hi...\n");   /*version 1*/
-        /*printf("Hi...");*/ /*version 2*/
-    }else{
-        printf("BYE\n");
-        flag=T;
-    }
-    alarm(1);
-}
-
 static void send_file(FILE *file, char *fname, int receiverSocket, FILE *sender_fp, struct  dataRecord *record) {
     char* buffer;
     long numbytes;
+    int seqCnt = 0;
 
     if (!file)
         error_message(__FILE__, __func__ , __LINE__, "Cannot read the file", 7);
@@ -134,8 +126,8 @@ static void send_file(FILE *file, char *fname, int receiverSocket, FILE *sender_
 
     int fileSendingTotalCount = numbytes/WINDOW_SIZE;
     int sentCnt = 0;
-    int seqCnt = 0;
-    struct tcpInfo tcpInfo;
+
+    struct tcpInfo tcpSend;
     while (sentCnt <= fileSendingTotalCount){
         ++sentCnt;
 
@@ -143,56 +135,62 @@ static void send_file(FILE *file, char *fname, int receiverSocket, FILE *sender_
         fread(buffer, sizeof *buffer, WINDOW_SIZE, file);
 
         printf("[Sending]: ");
-        tcpInfo.ack = 1;
-        tcpInfo.seq = seqCnt;
-        tcpInfo.fin = 0;
+        tcpSend.ack = 1;
+        tcpSend.seq = seqCnt;
+        tcpSend.fin = 0;
 
-        strcpy(tcpInfo.data, buffer);
-        printf("%s\n", tcpInfo.data);
+        strcpy(tcpSend.data, buffer);
+        printf("%s\n", tcpSend.data);
 
-        write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
+        write(receiverSocket, &tcpSend, sizeof(tcpSend));
         write_to_file(sender_fp, buffer, record->pshCnt++);
         seqCnt = seqCnt + WINDOW_SIZE;
 
-        signal(SIGALRM, sigalrm_handler);
-        alarm (1);
-
-        while(1) {
-            is_ack_receiver = false;
-            check_ack_respond(receiverSocket, sender_fp, record);
-            if (is_ack_receiver)
-                break;
-            write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
-        }
-
+        check_ack_respond(receiverSocket, sender_fp, &tcpSend, record);
 
         printf("\n-----------\n\n");
     }
 
-    //send fin data
-    tcpInfo.ack = 1;
-    tcpInfo.seq = seqCnt;
-    tcpInfo.fin = 1;
-    strcpy(tcpInfo.data, "");
-
-    write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
+    send_fin_data(receiverSocket, tcpSend, seqCnt);
 
     fclose(file);
     free(buffer);
 }
 
 
-static void check_ack_respond(int receiverSocket, FILE *sender_fp, struct dataRecord *record){
-    int bytes = 0;
-    struct tcpInfo tcpInfo;
+static void check_ack_respond(
+        int receiverSocket,
+        FILE *sender_fp,
+        struct tcpInfo *tcpSend,
+        struct dataRecord *record)
+{
+    while(1) {
+        int bytes = 0;
+        struct tcpInfo tcpReceive;
 
-    bytes = read(receiverSocket, &tcpInfo, sizeof(tcpInfo));
+        bytes = read(receiverSocket, &tcpReceive, sizeof(tcpReceive));
 
-    if (bytes > 0 ) {
-        is_ack_receiver = true;
-        printf("[received]: %s\n", tcpInfo.data);
-        write_to_file(sender_fp, tcpInfo.data, record->ackCnt++);
+        if (bytes > 0 )
+        {
+            printf("[received]: %s\n", tcpReceive.data);
+            write_to_file(sender_fp, tcpReceive.data, record->ackCnt++);
+            break;
+        }
+        else
+        {
+            write(receiverSocket, &tcpSend, sizeof(tcpSend));
+        }
     }
+}
+
+static void send_fin_data(int receiverSocket, struct tcpInfo tcpSend, int seqCnt){
+    //send finish data
+    tcpSend.ack = 1;
+    tcpSend.seq = seqCnt;
+    tcpSend.fin = 1;
+    strcpy(tcpSend.data, "");
+
+    write(receiverSocket, &tcpSend, sizeof(tcpSend));
 }
 
 static void parse_sender_arguments(int argc, char *argv[], struct senderOptions *opts)
