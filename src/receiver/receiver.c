@@ -120,6 +120,7 @@ static void parse_receiver_arguments(int argc, char *argv[], struct receiverOpti
 }
 
 static int read_data(int newSocket, struct receiverOptions *opts) {
+    int i = 0;
     while (1) {
         struct tcpInfo tcpInfo;
         struct tcpInfo tcpInfo2;
@@ -139,7 +140,11 @@ static int read_data(int newSocket, struct receiverOptions *opts) {
 
         printf("Received: %s \n", tcpInfo.data);
 
-        // Sending ACK
+//        //TESTING
+//        if (i == 2)
+//            continue;
+
+        //Sending ACK
         tcpInfo2.ack = 0;
         tcpInfo2.seq = 0;
         tcpInfo2.fin = 0;
@@ -147,6 +152,7 @@ static int read_data(int newSocket, struct receiverOptions *opts) {
 
         //send ACK
         write(newSocket, &tcpInfo2, sizeof(tcpInfo2));
+        i++;
     }
     return EXIT_SUCCESS;
 }
