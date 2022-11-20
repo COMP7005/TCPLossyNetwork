@@ -23,13 +23,12 @@ struct tcpInfo {
 
 struct proxyOptions
 {
-    int drop_data_per;
-    int drop_ack_per;
+    int drop_data_percent;
+    int drop_ack_percent;
+    int sender_fd;
     char *receiver_ip;
     in_port_t server_port;
     in_port_t proxy_port;
-
-    int sender_fd;
 };
 
 #define DEFAULT_PORT 5000
@@ -40,9 +39,10 @@ static void options_init(struct proxyOptions *opts);
 static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *opts);
 static void connect_receiver(struct proxyOptions *opts);
 static void transfer_data( int senderSocket, int receiverSocket, struct proxyOptions *opts);
-static int drop_packet(int drop_rate)
+static int drop_packet(int drop_rate);
 
-int main (int argc, char *argv[]) {
+int main (int argc, char *argv[])
+{
     struct proxyOptions opts;
     pid_t childip;
 
@@ -122,19 +122,19 @@ int main (int argc, char *argv[]) {
 
 static int drop_packet(int drop_rate)
 {
-    int drop_rate, rand_num;
+    int rand_num;
     rand_num = rand() % 99;
     printf("drop_rate: %d | rand_num: %d - ", drop_rate, rand_num);
 
     if (rand_num >= drop_rate)
     {
         printf("send\n");
-        return 1 // fail
+        return 1; // fail
     }
     else
     {
         printf("drop\n");
-        return 0 // success
+        return 0; // success
     }
 }
 
@@ -179,22 +179,34 @@ static void transfer_data
     int receiverSocket,
     struct proxyOptions *opts)
 {
-    int bytes1 = 0, bytes2 = 0;
+    int bytes1 = 0, bytes2 = 0, is_drop = 0;
     struct tcpInfo senderInfo;
     struct tcpInfo receiverInfo;
     while(1) {
         bytes1 = read(senderSocket, &senderInfo, sizeof(senderInfo));
+
         if (bytes1 <= 0) {
             printf("[-]cannot read Data\n");
         }
         printf("[+]Proxy received from \"Sender\": %s\n", senderInfo.data);
 
+        if (drop_packet(opts->drop_data_percent) == 0) // when the packet is dropped
+        {
+            printf("[!] The packet from sender is dropped\n");
+            continue;
+        }
+
         write(receiverSocket, &senderInfo, sizeof(senderInfo));
         printf("[+]Proxy send to \"Receiver\": %s\n\n", senderInfo.data);
 
-
         bytes2 = read(receiverSocket, &receiverInfo, sizeof(receiverInfo));
         printf("[+]Proxy received from \"Receiver\": %s\n", receiverInfo.data);
+
+        if (drop_packet(opts->drop_ack_percent) == 0) // when the packet is dropped
+        {
+            printf("[!] The packet from receiver is dropped\n");
+            continue;
+        }
 
         write(senderSocket, &receiverInfo, sizeof(receiverInfo));
         printf("[+]Proxy send to \"Sender\": %s\n\n", receiverInfo.data);
@@ -206,19 +218,6 @@ static void transfer_data
 
     close(receiverSocket);
 }
-
-static int check_ack_respond(int receiverSocket){
-    char response[10];
-    memset(response, 0, sizeof(response));
-
-    if (read(receiverSocket, response, sizeof(response)) < 0){
-        printf("-------error\n");
-    }
-
-    printf("received %s\n", response);
-    return EXIT_SUCCESS;
-}
-
 
 static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *opts)
 {
@@ -246,12 +245,12 @@ static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *o
             }
             case 'd': //drop data percentage
             {
-                opts->drop_data_per = atoi(optarg);
+                opts->drop_data_percent = atoi(optarg);
                 break;
             }
             case 'a': //drop ack percentage
             {
-                opts->drop_ack_per = atoi(optarg);
+                opts->drop_ack_percent = atoi(optarg);
                 break;
             }
             case ':':
@@ -273,6 +272,8 @@ static void options_init(struct proxyOptions *opts)
 {
     memset(opts, 0, sizeof(struct proxyOptions));
     opts->receiver_ip = "127.0.0.1"; //default localhost
-    opts->proxy_port  = DEFAULT_PORT;
-    opts->server_port  = DEFAULT_PORT;
+    opts->proxy_port = DEFAULT_PORT;
+    opts->server_port = DEFAULT_PORT;
+    opts->drop_ack_percent = 0;
+    opts->drop_data_percent = 0;
 }
