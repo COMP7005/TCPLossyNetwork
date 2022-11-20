@@ -122,16 +122,24 @@ static void parse_receiver_arguments(int argc, char *argv[], struct receiverOpti
 static int read_data(int newSocket, struct receiverOptions *opts) {
     while (1) {
         struct tcpInfo tcpInfo;
+        struct tcpInfo tcpInfo2;
 
         read(newSocket, &tcpInfo, sizeof(tcpInfo));
 
-        if (tcpInfo.fin == 1)
+        if (tcpInfo.fin == 1) {
+            tcpInfo2.ack = 0;
+            tcpInfo2.seq = 0;
+            tcpInfo2.fin = 1;
+            //send ACK
+            write(newSocket, &tcpInfo2, sizeof(tcpInfo2));
+            strcpy(tcpInfo2.data, "ACK");
+
             break;
+        }
 
         printf("Received: %s \n", tcpInfo.data);
 
         // Sending ACK
-        struct tcpInfo tcpInfo2;
         tcpInfo2.ack = 0;
         tcpInfo2.seq = 0;
         tcpInfo2.fin = 0;

@@ -44,6 +44,7 @@ static int drop_packet(int drop_rate)
 
 int main (int argc, char *argv[]) {
     struct proxyOptions opts;
+    pid_t childip;
 
     options_init(&opts);
     parse_proxy_arguments(argc, argv, &opts);
@@ -93,8 +94,19 @@ int main (int argc, char *argv[]) {
         sender_fd = accept(proxy_fd, (struct sockaddr*)&clientAddr, &addr_size);
         char * clientip = inet_ntoa(clientAddr.sin_addr);
 
+        if (sender_fd < 0)
+            error_errno(__FILE__, __func__ , __LINE__, errno, 2);
+
         printf("client no. %d %s connected\n", sender_fd, clientip);
 
+//        if ((childip = fork()) == 0) {
+//            close(proxy_fd);
+//
+//            if (connect_receiver((void *)&opts) == 0) {
+//                printf("[+]Finished.\n");
+//                break;
+//            }
+//        }
         if (sender_fd > 0)
         {
             opts.sender_fd = sender_fd;
@@ -157,9 +169,8 @@ static void connect_receiver(struct proxyOptions *opts)
     }
 
     printf("[+]server socket connected\n");
-    while(1) {
-        transfer_data(opts->sender_fd, receiver_fd, opts);
-    }
+
+    transfer_data(opts->sender_fd, receiver_fd, opts);
 }
 
 static void transfer_data
@@ -169,23 +180,31 @@ static void transfer_data
     struct proxyOptions *opts)
 {
     int bytes1 = 0, bytes2 = 0;
-    struct tcpInfo tcpInfo;
-    bytes1 = read(senderSocket, &tcpInfo, sizeof(tcpInfo));
-    if (bytes1 <= 0)
-    {
-        printf("[-]cannot read Data\n");
+    struct tcpInfo senderInfo;
+    struct tcpInfo receiverInfo;
+    while(1) {
+        bytes1 = read(senderSocket, &senderInfo, sizeof(senderInfo));
+        if (bytes1 <= 0) {
+            printf("[-]cannot read Data\n");
+        }
+        printf("[+]Proxy received from \"Sender\": %s\n", senderInfo.data);
+
+        write(receiverSocket, &senderInfo, sizeof(senderInfo));
+        printf("[+]Proxy send to \"Receiver\": %s\n\n", senderInfo.data);
+
+
+        bytes2 = read(receiverSocket, &receiverInfo, sizeof(receiverInfo));
+        printf("[+]Proxy received from \"Receiver\": %s\n", receiverInfo.data);
+
+        write(senderSocket, &receiverInfo, sizeof(receiverInfo));
+        printf("[+]Proxy send to \"Sender\": %s\n\n", receiverInfo.data);
+
+        if (receiverInfo.fin == 1){
+            break;
+        }
     }
-    printf("[+]Proxy received from \"Sender\": %s\n", tcpInfo.data);
 
-    write(receiverSocket, &tcpInfo, sizeof(tcpInfo));
-    printf("[+]Proxy send to \"Receiver\": %s\n\n", tcpInfo.data);
-
-    bytes2 = read(receiverSocket, &tcpInfo, sizeof(tcpInfo));
-    printf("[+]Proxy received from \"Receiver\": %s\n", tcpInfo.data);
-
-    write(senderSocket, &tcpInfo, sizeof(tcpInfo));
-    printf("[+]Proxy send to \"Sender\": %s\n\n", tcpInfo.data);
-
+    close(receiverSocket);
 }
 
 static int check_ack_respond(int receiverSocket){
