@@ -179,7 +179,7 @@ static void transfer_data
     int receiverSocket,
     struct proxyOptions *opts)
 {
-    int bytes1 = 0, bytes2 = 0, is_drop = 0;
+    int bytes1 = 0, bytes2 = 0;
     struct tcpInfo senderInfo;
     struct tcpInfo receiverInfo;
     while(1) {
