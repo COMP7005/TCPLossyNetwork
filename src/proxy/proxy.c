@@ -12,6 +12,7 @@
 #include <netdb.h>
 #include <ctype.h>
 #include <limits.h>
+#include <stdlib.h>
 
 struct tcpInfo {
     int seq;
@@ -39,6 +40,7 @@ static void options_init(struct proxyOptions *opts);
 static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *opts);
 static void connect_receiver(struct proxyOptions *opts);
 static void transfer_data( int senderSocket, int receiverSocket, struct proxyOptions *opts);
+static int drop_packet(int drop_rate)
 
 int main (int argc, char *argv[]) {
     struct proxyOptions opts;
@@ -106,6 +108,23 @@ int main (int argc, char *argv[]) {
     return EXIT_SUCCESS;
 }
 
+static int drop_packet(int drop_rate)
+{
+    int drop_rate, rand_num;
+    rand_num = rand() % 99;
+    printf("drop_rate: %d | rand_num: %d - ", drop_rate, rand_num);
+
+    if (rand_num >= drop_rate)
+    {
+        printf("send\n");
+        return 1 // fail
+    }
+    else
+    {
+        printf("drop\n");
+        return 0 // success
+    }
+}
 
 static void connect_receiver(struct proxyOptions *opts)
 {
