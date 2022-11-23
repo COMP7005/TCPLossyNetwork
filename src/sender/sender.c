@@ -125,6 +125,9 @@ static void send_file(FILE *file, char *fname, int receiverSocket, FILE *sender_
         EXIT_FAILURE;
 
     int fileSendingTotalCount = numbytes/WINDOW_SIZE;
+    int remain = numbytes%WINDOW_SIZE;
+    if (remain != 0)
+        fileSendingTotalCount++;
     int sentCnt = 0;
 
     struct tcpInfo tcpSend;
@@ -138,7 +141,6 @@ static void send_file(FILE *file, char *fname, int receiverSocket, FILE *sender_
         tcpSend.ack = 1;
         tcpSend.seq = seqCnt;
         tcpSend.fin = 0;
-
         strcpy(tcpSend.data, buffer);
         printf("%s\n", tcpSend.data);
 

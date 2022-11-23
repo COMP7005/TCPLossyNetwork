@@ -190,7 +190,8 @@ static void transfer_data
         }
         printf("[+]Proxy received from \"Sender\": %s\n", senderInfo.data);
 
-        if (drop_packet(opts->drop_data_percent) == 0) // when the packet is dropped
+        //Don't drop the finish
+        if (senderInfo.fin != 1 && drop_packet(opts->drop_data_percent) == 0) // when the packet is dropped
         {
             printf("[!] The packet from sender is dropped\n");
             continue;
@@ -202,7 +203,8 @@ static void transfer_data
         bytes2 = read(receiverSocket, &receiverInfo, sizeof(receiverInfo));
         printf("[+]Proxy received from \"Receiver\": %s\n", receiverInfo.data);
 
-        if (drop_packet(opts->drop_ack_percent) == 0) // when the packet is dropped
+        //Don't drop the finish
+        if (receiverInfo.fin != 1  && drop_packet(opts->drop_ack_percent) == 0) // when the packet is dropped
         {
             printf("[!] The packet from receiver is dropped\n");
             continue;

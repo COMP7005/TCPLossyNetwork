@@ -127,25 +127,22 @@ static int read_data(int newSocket, struct receiverOptions *opts) {
         read(newSocket, &tcpInfo, sizeof(tcpInfo));
 
         if (tcpInfo.fin == 1) {
-            tcpInfo2.ack = 0;
-            tcpInfo2.seq = 0;
+            tcpInfo2.ack = tcpInfo.seq;
+            tcpInfo2.seq = 1;
             tcpInfo2.fin = 1;
-            //send ACK
-            write(newSocket, &tcpInfo2, sizeof(tcpInfo2));
             strcpy(tcpInfo2.data, "ACK");
 
+            //send ACK
+            write(newSocket, &tcpInfo2, sizeof(tcpInfo2));
             break;
         }
 
         printf("Received: %s \n", tcpInfo.data);
 
-//        //TESTING
-//        if (i == 2)
-//            continue;
 
         //Sending ACK
-        tcpInfo2.ack = 0;
-        tcpInfo2.seq = 0;
+        tcpInfo2.ack = tcpInfo2.seq;
+        tcpInfo2.seq = 1;
         tcpInfo2.fin = 0;
         strcpy(tcpInfo2.data, "ACK");
 
