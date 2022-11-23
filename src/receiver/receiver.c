@@ -84,7 +84,7 @@ int main (int argc, char *argv[]) {
             close(sockfd);
 
             if (read_data(newSocket, &opts) == 0) {
-                printf("[+]Finished.\n");
+                printf("[+]Finished.\n\n");
                 break;
             }
         }
