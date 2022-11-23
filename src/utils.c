@@ -28,3 +28,31 @@ char * append(char * string1, char * string2) {
     asprintf(&result, "%s%s", string1, string2);
     return result;
 }
+
+void write_to_file(FILE *fp, char* data, int counter)
+{
+//    fp = fopen(filename, "a");
+//    fprintf(fp, "[%d]: %s\n", counter, data);
+    fprintf(fp, "%d, %s\n", counter, data);
+
+//    fclose(fp);
+}
+
+void write_to_file_tmp(char* filename, char* data, int counter)
+{
+    FILE* fp = fopen(filename, "a");
+    fprintf(fp, "%d, %s\n", counter, data);
+    fclose(fp);
+}
+
+void write_stat(char* filename, char* data, int sentCnt, int recCnt)
+{
+    FILE* fp = fopen(filename, "a");
+    fprintf(fp, "%d, %d, %d, %s\n", recCnt * 100 / sentCnt, sentCnt, recCnt, data);
+    fclose(fp);
+}
+
+//int get_percent(int sentCnt, int recCnt)
+//{
+//    return (recCnt * 100) / sentCnt;
+//}
