@@ -26,9 +26,8 @@ static void options_init(struct receiverOptions *opts);
 static void parse_receiver_arguments(int argc, char *argv[], struct receiverOptions *opts);
 static int read_data(int newSocket, struct receiverOptions *opts);
 
-#define WINDOW_SIZE 20
 #define SIZE 1024
-#define DEFAULT_PORT 5000
+#define DEFAULT_RECEIVER_PORT 4444
 #define MAX_PENDING 10
 
 
@@ -159,5 +158,5 @@ static int read_data(int newSocket, struct receiverOptions *opts) {
 
 static void options_init(struct receiverOptions *opts) {
     memset(opts, 0, sizeof(struct receiverOptions));
-    opts->port_in  = DEFAULT_PORT;
+    opts->port_in  = DEFAULT_RECEIVER_PORT;
 }

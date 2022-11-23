@@ -10,9 +10,10 @@
 #include <time.h>
 
 
-#define DEFAULT_PORT 5000
+#define DEFAULT_PROXY_PORT 5000
 #define SIZE 1024
 #define WINDOW_SIZE 6
+#define TCP_TIME_OUT 3
 
 struct dataRecord {
     int pshCnt;
@@ -43,7 +44,6 @@ static void send_fin_data(int receiverSocket, struct tcpInfo tcpSend, int seqCnt
 static void write_to_file(FILE *fp, char* data, int counter);
 
 const char* files[20];
-int timeout = 3;
 
 int main (int argc, char *argv[]) {
     struct senderOptions opts;
@@ -56,7 +56,7 @@ int main (int argc, char *argv[]) {
     int receiverSocket, ret;
     struct sockaddr_in serverAddr;
 
-    tv.tv_sec = timeout;
+    tv.tv_sec = TCP_TIME_OUT;
     tv.tv_usec = 0;
 
     FILE *fp;
@@ -261,7 +261,7 @@ static void options_init(struct senderOptions *opts, struct dataRecord *record)
     opts->proxy_ip = "127.0.0.1"; //default localhost
     opts->receiver_ip = "127.0.0.1"; //default localhost
     opts->sending_ip = "127.0.0.1"; //default localhost
-    opts->port  = DEFAULT_PORT;
+    opts->port  = DEFAULT_PROXY_PORT;
 
     memset(record, 0, sizeof(struct dataRecord));
     record->ackCnt = 0;

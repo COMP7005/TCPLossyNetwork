@@ -27,12 +27,12 @@ struct proxyOptions
     int drop_ack_percent;
     int sender_fd;
     char *receiver_ip;
-    in_port_t server_port;
+    in_port_t receiver_port;
     in_port_t proxy_port;
 };
 
-#define DEFAULT_PORT 5000
-#define WINDOW_SIZE 20
+#define RECEIVER_DEFAULT_PORT 4444
+#define PROXY_DEFAULT_PORT 5000
 #define SIZE 1024
 
 static void options_init(struct proxyOptions *opts);
@@ -49,7 +49,7 @@ int main (int argc, char *argv[])
     options_init(&opts);
     parse_proxy_arguments(argc, argv, &opts);
 
-    printf("server IP : %s and port %hu " , opts.receiver_ip, opts.server_port);
+    printf("server IP : %s and port %hu " , opts.receiver_ip, opts.receiver_port);
     printf("proxy port is %hu", opts.proxy_port);
     printf("\n");
 
@@ -159,7 +159,7 @@ static void connect_receiver(struct proxyOptions *opts)
 
     // Set socket variables
     receiver_sd.sin_family = AF_INET;
-    receiver_sd.sin_port = htons(opts->server_port);
+    receiver_sd.sin_port = htons(opts->receiver_port);
     receiver_sd.sin_addr.s_addr = inet_addr(opts->receiver_ip);
 
     // Connect to main server from this proxy server
@@ -234,7 +234,7 @@ static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *o
             case 'i': //port in
             {
                 // This is server port => proxy will connect to server with this port
-                opts->server_port = parse_port(optarg, 10);
+                opts->receiver_port = parse_port(optarg, 10);
                 break;
             }
             case 'o': //port out
@@ -272,8 +272,8 @@ static void options_init(struct proxyOptions *opts)
 {
     memset(opts, 0, sizeof(struct proxyOptions));
     opts->receiver_ip = "127.0.0.1"; //default localhost
-    opts->proxy_port = DEFAULT_PORT;
-    opts->server_port = DEFAULT_PORT;
+    opts->proxy_port = PROXY_DEFAULT_PORT;
+    opts->receiver_port = RECEIVER_DEFAULT_PORT;
     opts->drop_ack_percent = 0;
     opts->drop_data_percent = 0;
 }
