@@ -10,21 +10,15 @@
 #include <arpa/inet.h>
 #include <time.h>
 
-#define DEFAULT_PORT 5000
+#define DEFAULT_PROXY_PORT 5000
 #define SIZE 1024
 #define WINDOW_SIZE 6
+#define TCP_TIME_OUT 3
 #define FILENAME "sender_info.csv"
 
 struct dataRecord {
-    int pshCnt;
-    int ackCnt;
-};
-
-struct tcpInfo {
-    int seq;
-    int ack;
-    int fin;
-    char data[NAME_MAX + 1];
+    int sentCnt;
+    int recCnt;
 };
 
 struct senderOptions
@@ -38,12 +32,11 @@ struct senderOptions
 
 static void options_init(struct senderOptions *opts, struct dataRecord *record);
 static void parse_sender_arguments(int argc, char *argv[], struct senderOptions *opts);
-static void send_file(FILE *fp, char *fname, int sockfd, FILE *sender_fp, struct  dataRecord *record);
-static void check_ack_respond(int receiverSocket, FILE *sender_fp, struct tcpInfo *tcpSend, struct dataRecord *record);
+static void send_file(FILE *fp, char *fname, int sockfd, struct  dataRecord *record);
+static void check_ack_respond(int receiverSocket, struct tcpInfo *tcpSend, struct dataRecord *record);
 static void send_fin_data(int receiverSocket, struct tcpInfo tcpSend, int seqCnt);
 
 const char* files[20];
-int timeout = 3;
 
 int main (int argc, char *argv[]) {
     struct senderOptions opts;
@@ -56,7 +49,7 @@ int main (int argc, char *argv[]) {
     int receiverSocket, ret;
     struct sockaddr_in serverAddr;
 
-    tv.tv_sec = timeout;
+    tv.tv_sec = TCP_TIME_OUT;
     tv.tv_usec = 0;
 
     FILE *fp;
@@ -81,8 +74,9 @@ int main (int argc, char *argv[]) {
         error_errno(__FILE__, __func__ , __LINE__, errno, 2);
     }
     printf("[+]Connect to Server.\n");
-    sender_fp = fopen(FILENAME, "a");
-    fclose(sender_fp);
+//    sender_fp = fopen(FILENAME, "a");
+//    fclose(sender_fp);
+
     for (int i = 0; i < opts.file_cnt; i++){
         fp = fopen(files[i], "r");
         if (fp == NULL) {
@@ -92,7 +86,7 @@ int main (int argc, char *argv[]) {
         strcpy(fname, files[i]);
 
         printf("[+]Sending: %s....\n\n", fname);
-        send_file(fp, fname, receiverSocket, sender_fp, &record);
+        send_file(fp, fname, receiverSocket, &record);
     }
 
 //    fclose(sender_fp);
@@ -102,8 +96,8 @@ int main (int argc, char *argv[]) {
     return EXIT_SUCCESS;
 }
 
-static void send_file(FILE *file, char *fname, int receiverSocket, \
-                        FILE *sender_fp, struct  dataRecord *record)
+static void send_file(FILE *file, char *fname,
+                        int receiverSocket, struct  dataRecord *record)
 {
     char* buffer;
     long numbytes;
@@ -122,10 +116,13 @@ static void send_file(FILE *file, char *fname, int receiverSocket, \
         EXIT_FAILURE;
 
     int fileSendingTotalCount = numbytes/WINDOW_SIZE;
+    int remain = numbytes%WINDOW_SIZE;
+    if (remain != 0)
+        fileSendingTotalCount++;
     int sentCnt = 0;
 
     struct tcpInfo tcpSend;
-    while (sentCnt <= fileSendingTotalCount){
+    while (sentCnt < fileSendingTotalCount){
         ++sentCnt;
 
         //read file
@@ -135,19 +132,17 @@ static void send_file(FILE *file, char *fname, int receiverSocket, \
         tcpSend.ack = 1;
         tcpSend.seq = seqCnt;
         tcpSend.fin = 0;
-
         strcpy(tcpSend.data, buffer);
         printf("%s\n", tcpSend.data);
 
         write(receiverSocket, &tcpSend, sizeof(tcpSend));
-//        write_to_file(sender_fp, tcpSend.data, record->pshCnt++);
+        write_stat(FILENAME, tcpSend.data, ++record->sentCnt, record->recCnt);
+
         seqCnt = seqCnt + WINDOW_SIZE;
-
-        check_ack_respond(receiverSocket, sender_fp, &tcpSend, record);
-
+        check_ack_respond(receiverSocket, &tcpSend, record);
         printf("\n-----------\n\n");
     }
-
+    printf("[+]Sending: fin\n");
     send_fin_data(receiverSocket, tcpSend, seqCnt);
 
     fclose(file);
@@ -155,8 +150,7 @@ static void send_file(FILE *file, char *fname, int receiverSocket, \
 }
 
 
-static void check_ack_respond(int receiverSocket, FILE *sender_fp, \
-                                struct tcpInfo *tcpSend, struct dataRecord *record)
+static void check_ack_respond(int receiverSocket, struct tcpInfo *tcpSend, struct dataRecord *record)
 {
     while(1) {
         int bytes = 0;
@@ -167,13 +161,14 @@ static void check_ack_respond(int receiverSocket, FILE *sender_fp, \
         if (bytes > 0 )
         {
             printf("[received]: %s\n", tcpReceive.data);
-            write_to_file(sender_fp, tcpReceive.data, record->ackCnt++);
+            write_stat(FILENAME, tcpReceive.data, record->sentCnt, ++record->recCnt);
             break;
         }
         else // resend
         {
+            printf("[Resending]: %s\n", tcpSend->data);
             write(receiverSocket, &tcpSend, sizeof(tcpSend));
-//            write_to_file(sender_fp, tcpSend->data, record->pshCnt); ///
+            write_stat(FILENAME, tcpSend->data, ++record->sentCnt, record->recCnt);
         }
     }
 }
@@ -184,7 +179,7 @@ static void send_fin_data(int receiverSocket, struct tcpInfo tcpSend, int seqCnt
     tcpSend.ack = 1;
     tcpSend.seq = seqCnt;
     tcpSend.fin = 1;
-    strcpy(tcpSend.data, "");
+    strcpy(tcpSend.data, "FIN");
 
     write(receiverSocket, &tcpSend, sizeof(tcpSend));
 }
@@ -257,9 +252,9 @@ static void options_init(struct senderOptions *opts, struct dataRecord *record)
     opts->proxy_ip = "127.0.0.1"; //default localhost
     opts->receiver_ip = "127.0.0.1"; //default localhost
     opts->sending_ip = "127.0.0.1"; //default localhost
-    opts->port  = DEFAULT_PORT;
+    opts->port  = DEFAULT_PROXY_PORT;
 
     memset(record, 0, sizeof(struct dataRecord));
-    record->ackCnt = 0;
-    record->pshCnt = 0;
+    record->sentCnt = 0;
+    record->recCnt = 0;
 }

@@ -5,6 +5,13 @@
 #include <sys/stat.h>
 #include <string.h>
 
+struct tcpInfo {
+    int seq;
+    int ack;
+    int fin;
+    char data[NAME_MAX];
+};
+
 void create_directory(const char *dir) {
     char tmp[256];
     char *p = NULL;
@@ -29,28 +36,33 @@ char * append(char * string1, char * string2) {
     return result;
 }
 
-void write_to_file(FILE *fp, char* data, int counter)
-{
-//    fp = fopen(filename, "a");
-//    fprintf(fp, "[%d]: %s\n", counter, data);
-    fprintf(fp, "%d, %s\n", counter, data);
-
-//    fclose(fp);
-}
-
-void write_to_file_tmp(char* filename, char* data, int counter)
-{
-    FILE* fp = fopen(filename, "a");
-    fprintf(fp, "%d, %s\n", counter, data);
-    fclose(fp);
-}
-
 void write_stat(char* filename, char* data, int sentCnt, int recCnt)
 {
     FILE* fp = fopen(filename, "a");
-    fprintf(fp, "%d, %d, %d, %s\n", recCnt * 100 / sentCnt, sentCnt, recCnt, data);
+//    fprintf(fp, "%d, %d, %d, %s\n", recCnt * 100 / sentCnt, sentCnt, recCnt, data);
+//    fprintf(fp, "%d, %d, %s\n", sentCnt, recCnt, data);
+    fprintf(fp, "%d, %d\n", sentCnt, recCnt);
     fclose(fp);
 }
+
+void write_stat_proxy(char* filename, int sentCnt, int recCnt,
+                        int sentDropCnt, int recDropCnt, struct tcpInfo *info)
+{
+    if (info->fin == 1)
+        return;
+
+    FILE* fp = fopen(filename, "a");
+//    fprintf(fp, "%d, %d, %d, %d, %s\n", sentCnt, recCnt, sentDropCnt, recDropCnt, info->data);
+    fprintf(fp, "%d, %d, %d, %d\n", sentCnt, recCnt, sentDropCnt, recDropCnt);
+    fclose(fp);
+}
+
+//void write_stat_proxy(char* filename, char* data, int sentCnt, int recCnt, int sentDropCnt, int recDropCnt)
+//{
+//    FILE* fp = fopen(filename, "a");
+//    fprintf(fp, "%d, %d, %d, %d, %s\n", sentCnt, recCnt, sentDropCnt, recDropCnt, data);
+//    fclose(fp);
+//}
 
 //int get_percent(int sentCnt, int recCnt)
 //{

@@ -18,16 +18,10 @@
 #define FILENAME "proxy_info.csv"
 
 struct dataRecord {
-    int pshCnt;
-    int ackCnt;
-    FILE *stat_fp;
-};
-
-struct tcpInfo {
-    int seq;
-    int ack;
-    int fin;
-    char data[NAME_MAX];
+    int sentCnt;
+    int recCnt;
+    int sentDropCnt;
+    int recDropCnt;
 };
 
 struct proxyOptions
@@ -36,12 +30,12 @@ struct proxyOptions
     int drop_ack_percent;
     int sender_fd;
     char *receiver_ip;
-    in_port_t server_port;
+    in_port_t receiver_port;
     in_port_t proxy_port;
 };
 
-#define DEFAULT_PORT 5000
-#define WINDOW_SIZE 20
+#define RECEIVER_DEFAULT_PORT 4444
+#define PROXY_DEFAULT_PORT 5000
 #define SIZE 1024
 
 static void options_init(struct proxyOptions *opts, struct dataRecord *record);
@@ -56,10 +50,11 @@ int main (int argc, char *argv[])
     struct dataRecord record;
     pid_t childip;
 
+    srand (time(NULL));
     options_init(&opts, &record);
     parse_proxy_arguments(argc, argv, &opts);
 
-    printf("server IP : %s and port %hu " , opts.receiver_ip, opts.server_port);
+    printf("server IP : %s and port %hu " , opts.receiver_ip, opts.receiver_port);
     printf("proxy port is %hu", opts.proxy_port);
     printf("\n");
 
@@ -170,7 +165,7 @@ static void connect_receiver(struct proxyOptions *opts, struct dataRecord *recor
 
     // Set socket variables
     receiver_sd.sin_family = AF_INET;
-    receiver_sd.sin_port = htons(opts->server_port);
+    receiver_sd.sin_port = htons(opts->receiver_port);
     receiver_sd.sin_addr.s_addr = inet_addr(opts->receiver_ip);
 
     // Connect to main server from this proxy server
@@ -182,8 +177,6 @@ static void connect_receiver(struct proxyOptions *opts, struct dataRecord *recor
     printf("[+]server socket connected\n");
 
     transfer_data(opts->sender_fd, receiver_fd, opts, record);
-//    fclose(record->stat_fp);
-//    printf("!!! %s is closed", FILENAME);
 }
 
 static void transfer_data(int senderSocket, int receiverSocket, \
@@ -193,48 +186,56 @@ static void transfer_data(int senderSocket, int receiverSocket, \
     struct tcpInfo senderInfo;
     struct tcpInfo receiverInfo;
 
-//    record->stat_fp = fopen(FILENAME, "a");
-//    printf("!!! %s is opened\n", FILENAME);
     while(1) {
         bytes1 = read(senderSocket, &senderInfo, sizeof(senderInfo));
 
-        if (bytes1 <= 0) {
+        if (bytes1 <= 0)
             printf("[-]cannot read Data\n");
-        }
-        printf("[+]Proxy received from \"Sender\": %s\n", senderInfo.data);
-//        write_to_file(record->stat_fp, senderInfo.data, record->pshCnt++);
-//        write_to_file_tmp(FILENAME, "from_sender", record->pshCnt++); /////////////////////////////////////
 
-        if (drop_packet(opts->drop_data_percent) == 0) // when the packet is dropped
+        printf("[+]Proxy received from \"Sender\": %s\n", senderInfo.data);
+
+        write_stat_proxy(FILENAME, record->sentCnt, ++record->recCnt, \
+                            record->sentDropCnt, record->recDropCnt, (void *)&senderInfo);
+
+        // Don't drop the finish
+        if (senderInfo.fin != 1 && drop_packet(opts->drop_data_percent) == 0) // when the packet is dropped
         {
             printf("[!] The packet from sender is dropped\n");
+            ++record->sentDropCnt;
             continue;
         }
 
         write(receiverSocket, &senderInfo, sizeof(senderInfo));
         printf("[+]Proxy send to \"Receiver\": %s\n\n", senderInfo.data);
 
+        write_stat_proxy(FILENAME, ++record->sentCnt, record->recCnt, \
+                            record->sentDropCnt, record->recDropCnt, (void *)&senderInfo);
+
         bytes2 = read(receiverSocket, &receiverInfo, sizeof(receiverInfo));
         printf("[+]Proxy received from \"Receiver\": %s\n", receiverInfo.data);
-//        write_to_file(record->stat_fp, receiverInfo.data, record->ackCnt++);
-//        write_to_file_tmp(FILENAME, receiverInfo.data, record->ackCnt++); /////////////////////////////////////
-        if (drop_packet(opts->drop_ack_percent) == 0) // when the packet is dropped
+
+        write_stat_proxy(FILENAME, record->sentCnt, ++record->recCnt, \
+                            record->sentDropCnt, record->recDropCnt, (void *)&receiverInfo);
+
+        // Don't drop the finish
+        if (receiverInfo.fin != 1 && drop_packet(opts->drop_ack_percent) == 0) // when the packet is dropped
         {
             printf("[!] The packet from receiver is dropped\n");
+            ++record->recDropCnt;
             continue;
         }
 
         write(senderSocket, &receiverInfo, sizeof(receiverInfo));
         printf("[+]Proxy send to \"Sender\": %s\n\n", receiverInfo.data);
 
+        write_stat_proxy(FILENAME, ++record->sentCnt, record->recCnt, \
+                            record->sentDropCnt, record->recDropCnt, (void *)&receiverInfo);
+
         if (receiverInfo.fin == 1){
-//            printf("@@@@@@@@@@@@@@@@@@@@break@@@@@@@@@@@@@@@@@@@@@");
+            printf("@@@@@@@@@@@@@@@@@@@@ Data Transfer Completed @@@@@@@@@@@@@@@@@@@@\n");
             break;
         }
     }
-//    fclose(record->stat_fp);
-//    printf("!!! %s is closed", FILENAME);
-
     close(receiverSocket);
 }
 
@@ -253,7 +254,7 @@ static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *o
             case 'i': //port in
             {
                 // This is server port => proxy will connect to server with this port
-                opts->server_port = parse_port(optarg, 10);
+                opts->receiver_port = parse_port(optarg, 10);
                 break;
             }
             case 'o': //port out
@@ -290,12 +291,13 @@ static void options_init(struct proxyOptions *opts, struct dataRecord *record)
 {
     memset(opts, 0, sizeof(struct proxyOptions));
     opts->receiver_ip = "127.0.0.1"; //default localhost
-    opts->proxy_port = DEFAULT_PORT;
-    opts->server_port = DEFAULT_PORT;
+    opts->proxy_port = PROXY_DEFAULT_PORT;
+    opts->receiver_port = RECEIVER_DEFAULT_PORT;
     opts->drop_ack_percent = 0;
     opts->drop_data_percent = 0;
     memset(record, 0, sizeof(struct dataRecord));
-    record->ackCnt = 0;
-    record->pshCnt = 0;
-//    record->stat_fp = fopen(FILENAME, "a");
+    record->sentCnt = 0;
+    record->recCnt = 0;
+    record->sentDropCnt = 0;
+    record->recDropCnt = 0;
 }
