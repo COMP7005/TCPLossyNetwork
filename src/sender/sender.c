@@ -57,7 +57,7 @@ int main (int argc, char *argv[]) {
 
     receiverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (receiverSocket < 0) {
-        error_errno(__FILE__, __func__ , __LINE__, errno, 2);
+        error_errno(__FILE__, __func__ , __LINE__, errno, 1);
     }
 
     //set timer for receiver method.
@@ -74,13 +74,11 @@ int main (int argc, char *argv[]) {
         error_errno(__FILE__, __func__ , __LINE__, errno, 2);
     }
     printf("[+]Connect to Server.\n");
-//    sender_fp = fopen(FILENAME, "a");
-//    fclose(sender_fp);
 
     for (int i = 0; i < opts.file_cnt; i++){
         fp = fopen(files[i], "r");
         if (fp == NULL) {
-            error_message(__FILE__, __func__ , __LINE__, "Can't read a file", 2);
+            error_message(__FILE__, __func__ , __LINE__, "Can't read a file", 3);
         }
         char *fname = (char*) malloc(sizeof(files[i])+1);
         strcpy(fname, files[i]);
@@ -89,7 +87,6 @@ int main (int argc, char *argv[]) {
         send_file(fp, fname, receiverSocket, &record);
     }
 
-//    fclose(sender_fp);
     close(receiverSocket);
     printf("[+]sent data successfully.\n");
 
@@ -104,7 +101,7 @@ static void send_file(FILE *file, char *fname,
     int seqCnt = 0;
 
     if (!file)
-        error_message(__FILE__, __func__ , __LINE__, "Cannot read the file", 7);
+        error_message(__FILE__, __func__ , __LINE__, "Cannot read the file", 4);
 
     fseek(file, 0L, SEEK_END);
     numbytes = ftell(file);
@@ -115,8 +112,8 @@ static void send_file(FILE *file, char *fname,
     if (buffer == NULL)
         EXIT_FAILURE;
 
-    int fileSendingTotalCount = numbytes/WINDOW_SIZE;
-    int remain = numbytes%WINDOW_SIZE;
+    int fileSendingTotalCount = numbytes / WINDOW_SIZE;
+    int remain = numbytes % WINDOW_SIZE;
     if (remain != 0)
         fileSendingTotalCount++;
     int sentCnt = 0;

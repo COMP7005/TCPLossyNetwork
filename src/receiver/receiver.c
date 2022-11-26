@@ -49,7 +49,7 @@ int main (int argc, char *argv[]) {
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
-        error_errno(__FILE__, __func__ , __LINE__, errno, 2);
+        error_errno(__FILE__, __func__ , __LINE__, errno, 1);
     }
     printf("[+]Server socket created.\n");
 
@@ -67,13 +67,13 @@ int main (int argc, char *argv[]) {
     if (listen(sockfd, MAX_PENDING) == 0)
         printf("Listening...\n");
     else
-        error_errno(__FILE__, __func__ , __LINE__, errno, 2);
+        error_errno(__FILE__, __func__ , __LINE__, errno, 3);
 
     while (1) {
         newSocket = accept(sockfd, (struct sockaddr*)&newAddr, &addr_size);
 
         if (newSocket < 0)
-            error_errno(__FILE__, __func__ , __LINE__, errno, 2);
+            error_errno(__FILE__, __func__ , __LINE__, errno, 4);
 
         //set current input ip
         opts.ip_in = inet_ntoa(newAddr.sin_addr);
