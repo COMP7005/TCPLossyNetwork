@@ -1,10 +1,9 @@
-
-import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
 import csv
 import sys
 import getopt
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
 
 plt.style.use('fivethirtyeight')
 
@@ -17,21 +16,22 @@ y_received_drop = []
 def animate(i, mode, file):
     try:
         data = pd.read_csv(file)
+        
         if mode in ["Sender", "Receiver"]:
-            x_time = data['Time']
-            y_sent = data['Sent']
-            y_received = data['Received']
+            x_time = data["Time"]
+            y_sent = data["Sent"]
+            y_received = data["Received"]
 
             plt.cla()
             plt.plot(x_time, y_sent, label = "Sent")
             plt.plot(x_time, y_received, label = "Received")
 
         elif mode in ["Proxy"]:
-            x_time = data['Time']
-            y_sent = data['Sent']
-            y_received = data['Received']
-            y_sent_drop = data['Sent_Drop']
-            y_received_drop = data['Received_Drop']
+            x_time = data["Time"]
+            y_sent = data["Sent"]
+            y_received = data["Received"]
+            y_sent_drop = data["Sent_Drop"]
+            y_received_drop = data["Received_Drop"]
 
             plt.cla()
             plt.plot(x_time, y_sent, label = "Sent")
@@ -43,8 +43,8 @@ def animate(i, mode, file):
             print("There is no such mode: ", mode)
             sys.exit(2)
 
-        plt.xlabel('Time')
-        plt.ylabel('# of Packets')
+        plt.xlabel("Time")
+        plt.ylabel("# of Packets")
         plt.title("{} Stats".format(mode))
         plt.gcf().autofmt_xdate()
         # plt.tight_layout()
@@ -54,6 +54,7 @@ def animate(i, mode, file):
         print(e)
         # sys.exit(2)
         return
+
 def main():
     argv = sys.argv
     arg_file = mode= ""
@@ -92,5 +93,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
