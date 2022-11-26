@@ -10,10 +10,7 @@
 #include <arpa/inet.h>
 #include <stdbool.h>
 #include <pthread.h>
-#include <netdb.h>
 #include <ctype.h>
-#include <limits.h>
-#include <stdlib.h>
 
 #define FILENAME "proxy_info.csv"
 
@@ -71,7 +68,7 @@ int main (int argc, char *argv[])
     // create a socket
     if ((proxy_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
-        printf("[-]Failed to create socket\n");
+        error_errno(__FILE__, __func__ , __LINE__, errno, 1);
     }
     printf("Proxy created\n");
     memset(&proxy_sd, 0, sizeof(proxy_sd));
@@ -84,13 +81,13 @@ int main (int argc, char *argv[])
     // bind the socket
     if ((bind(proxy_fd, (struct sockaddr*)&proxy_sd,sizeof(proxy_sd))) < 0)
     {
-        printf("[-]Failed to bind a socket\n");
+        error_errno(__FILE__, __func__ , __LINE__, errno, 2);
     }
 
     // Start listening to the port for new connections
     if ((listen(proxy_fd, SOMAXCONN)) < 0)
     {
-        printf("[-]Failed to listen\n");
+        error_errno(__FILE__, __func__ , __LINE__, errno, 3);
     }
     printf("[+]waiting for connection..\n");
 
@@ -101,7 +98,7 @@ int main (int argc, char *argv[])
         char * clientip = inet_ntoa(clientAddr.sin_addr);
 
         if (sender_fd < 0)
-            error_errno(__FILE__, __func__ , __LINE__, errno, 2);
+            error_errno(__FILE__, __func__ , __LINE__, errno, 4);
 
         printf("client no. %d %s connected\n", sender_fd, clientip);
         write_stat_header(FILENAME, "Time,Sent,Received,Sent_Drop,Received_Drop");
@@ -173,7 +170,7 @@ static void connect_receiver(struct proxyOptions *opts, struct dataRecord *recor
     transfer_data(opts->sender_fd, receiver_fd, opts, record);
 }
 
-static void transfer_data(int senderSocket, int receiverSocket, \
+static void transfer_data(int senderSocket, int receiverSocket,
                             struct proxyOptions *opts, struct dataRecord *record)
 {
     int bytes1 = 0, bytes2 = 0;
@@ -259,12 +256,22 @@ static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *o
             }
             case 'd': //drop data percentage
             {
-                opts->drop_data_percent = atoi(optarg);
+                int data_drop_rate = atoi(optarg);
+                if (data_drop_rate < 0 && data_drop_rate > 100) {
+                    error_message(__FILE__, __func__, __LINE__,
+                                  "\"Drop rate is between 0 and 100\"", 5);
+                }
+                opts->drop_data_percent = data_drop_rate;
                 break;
             }
             case 'a': //drop ack percentage
             {
-                opts->drop_ack_percent = atoi(optarg);
+                int ack_drop_rate = atoi(optarg);
+                if (ack_drop_rate < 0 && ack_drop_rate > 100) {
+                    error_message(__FILE__, __func__, __LINE__,
+                                  "\"Drop rate is between 0 and 100\"", 5);
+                }
+                opts->drop_ack_percent = ack_drop_rate
                 break;
             }
             case ':':
