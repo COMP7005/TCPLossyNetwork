@@ -70,6 +70,7 @@ int main (int argc, char *argv[]) {
         error_errno(__FILE__, __func__ , __LINE__, errno, 3);
 
     while (1) {
+        write_stat_header(FILENAME, "Time,Sent,Received");
         newSocket = accept(sockfd, (struct sockaddr*)&newAddr, &addr_size);
 
         if (newSocket < 0)
