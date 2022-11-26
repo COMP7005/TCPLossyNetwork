@@ -63,6 +63,7 @@ int main (int argc, char *argv[]) {
     //set timer for receiver method.
     setsockopt(receiverSocket, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(struct timeval));
     printf("[+]Client socket is created.\n");
+    write_stat_header(FILENAME, "Time,Sent,Received");
 
     memset(&serverAddr, '\0', sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;

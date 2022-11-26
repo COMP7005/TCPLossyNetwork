@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <string.h>
+#include <time.h>
 
 struct tcpInfo {
     int seq;
@@ -38,10 +39,11 @@ char * append(char * string1, char * string2) {
 
 void write_stat(char* filename, char* data, int sentCnt, int recCnt)
 {
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
     FILE* fp = fopen(filename, "a");
-//    fprintf(fp, "%d, %d, %d, %s\n", recCnt * 100 / sentCnt, sentCnt, recCnt, data);
-//    fprintf(fp, "%d, %d, %s\n", sentCnt, recCnt, data);
-    fprintf(fp, "%d, %d\n", sentCnt, recCnt);
+    // fprintf(fp, "%d, %d, %s\n", sentCnt, recCnt, data);
+    fprintf(fp, "%02d:%02d:%02d, %d, %d\n", tm.tm_hour, tm.tm_min, tm.tm_sec, sentCnt, recCnt);
     fclose(fp);
 }
 
@@ -51,9 +53,19 @@ void write_stat_proxy(char* filename, int sentCnt, int recCnt,
     if (info->fin == 1)
         return;
 
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
     FILE* fp = fopen(filename, "a");
-//    fprintf(fp, "%d, %d, %d, %d, %s\n", sentCnt, recCnt, sentDropCnt, recDropCnt, info->data);
-    fprintf(fp, "%d, %d, %d, %d\n", sentCnt, recCnt, sentDropCnt, recDropCnt);
+    // fprintf(fp, "%d, %d, %d, %d, %s\n", sentCnt, recCnt, sentDropCnt, recDropCnt, info->data);
+    fprintf(fp, "%02d:%02d:%02d, %d, %d, %d, %d\n", tm.tm_hour, tm.tm_min, tm.tm_sec, \
+                sentCnt, recCnt, sentDropCnt, recDropCnt);
+    fclose(fp);
+}
+
+void write_stat_header(char* filename, char* header)
+{
+    FILE* fp = fopen(filename, "w");
+    fprintf(fp, "%s\n", header);
     fclose(fp);
 }
 

@@ -43,6 +43,7 @@ static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *o
 static void connect_receiver(struct proxyOptions *opts, struct dataRecord *record);
 static void transfer_data( int senderSocket, int receiverSocket, struct proxyOptions *opts, struct dataRecord *record);
 static int drop_packet(int drop_rate);
+static void reset_record(struct dataRecord *record);
 
 int main (int argc, char *argv[])
 {
@@ -103,16 +104,9 @@ int main (int argc, char *argv[])
             error_errno(__FILE__, __func__ , __LINE__, errno, 2);
 
         printf("client no. %d %s connected\n", sender_fd, clientip);
-//        record.stat_fp = fopen(FILENAME, "a");
-//        printf("!!! %s is opened\n", FILENAME);
-//        if ((childip = fork()) == 0) {
-//            close(proxy_fd);
-//
-//            if (connect_receiver((void *)&opts) == 0) {
-//                printf("[+]Finished.\n");
-//                break;
-//            }
-//        }
+        write_stat_header(FILENAME, "Time,Sent,Received,Sent_Drop,Received_Drop");
+        reset_record(&record);
+
         if (sender_fd > 0)
         {
             opts.sender_fd = sender_fd;
@@ -296,6 +290,14 @@ static void options_init(struct proxyOptions *opts, struct dataRecord *record)
     opts->drop_ack_percent = 0;
     opts->drop_data_percent = 0;
     memset(record, 0, sizeof(struct dataRecord));
+    record->sentCnt = 0;
+    record->recCnt = 0;
+    record->sentDropCnt = 0;
+    record->recDropCnt = 0;
+}
+
+static void reset_record(struct dataRecord *record)
+{
     record->sentCnt = 0;
     record->recCnt = 0;
     record->sentDropCnt = 0;
