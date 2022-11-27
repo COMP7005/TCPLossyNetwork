@@ -10,11 +10,11 @@
 #include <arpa/inet.h>
 #include <stdbool.h>
 #include <pthread.h>
-#include <ctype.h>
 
 #define FILENAME "proxy_info.csv"
 
-struct dataRecord {
+struct dataRecord
+{
     int sentCnt;
     int recCnt;
     int sentDropCnt;
@@ -67,9 +67,8 @@ int main (int argc, char *argv[])
 
     // create a socket
     if ((proxy_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-    {
         error_errno(__FILE__, __func__ , __LINE__, errno, 1);
-    }
+
     printf("Proxy created\n");
     memset(&proxy_sd, 0, sizeof(proxy_sd));
 
@@ -80,15 +79,12 @@ int main (int argc, char *argv[])
 
     // bind the socket
     if ((bind(proxy_fd, (struct sockaddr*)&proxy_sd,sizeof(proxy_sd))) < 0)
-    {
         error_errno(__FILE__, __func__ , __LINE__, errno, 2);
-    }
 
     // Start listening to the port for new connections
     if ((listen(proxy_fd, SOMAXCONN)) < 0)
-    {
         error_errno(__FILE__, __func__ , __LINE__, errno, 3);
-    }
+
     printf("[+]waiting for connection..\n");
 
     // Accept one client at one time
@@ -100,7 +96,7 @@ int main (int argc, char *argv[])
         if (sender_fd < 0)
             error_errno(__FILE__, __func__ , __LINE__, errno, 4);
 
-        printf("client no. %d %s connected\n", sender_fd, clientip);
+        printf("[+]client %s connected\n", clientip);
         write_stat_header(FILENAME, "Time,Sent,Received,Sent_Drop,Received_Drop");
         reset_record(&record);
 
@@ -121,16 +117,16 @@ static int drop_packet(int drop_rate)
 {
     int rand_num;
     rand_num = rand() % 99;
-    printf("drop_rate: %d | rand_num: %d - ", drop_rate, rand_num);
+    // printf("drop_rate: %d | rand_num: %d - ", drop_rate, rand_num);
 
     if (rand_num >= drop_rate)
     {
-        printf("send\n");
+        // printf("send\n");
         return 1; // fail
     }
     else
     {
-        printf("drop\n");
+        // printf("drop\n");
         return 0; // success
     }
 }
@@ -147,11 +143,9 @@ static void connect_receiver(struct proxyOptions *opts, struct dataRecord *recor
     // Create a socket
     receiver_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (receiver_fd < 0)
-    {
         printf("[-]server socket not created\n");
-    }
 
-    printf("server socket created\n");
+    printf("[+]server socket created\n");
     memset(&receiver_sd, 0, sizeof(receiver_sd));
 
     // Set socket variables
@@ -161,12 +155,9 @@ static void connect_receiver(struct proxyOptions *opts, struct dataRecord *recor
 
     // Connect to main server from this proxy server
     if ((connect(receiver_fd, (struct sockaddr *)&receiver_sd, sizeof(receiver_sd))) < 0)
-    {
         printf("[-]receiver connection not established\n");
-    }
 
     printf("[+]server socket connected\n");
-
     transfer_data(opts->sender_fd, receiver_fd, opts, record);
 }
 
@@ -177,13 +168,14 @@ static void transfer_data(int senderSocket, int receiverSocket,
     struct tcpInfo senderInfo;
     struct tcpInfo receiverInfo;
 
-    while(1) {
+    while(1)
+    {
         bytes1 = read(senderSocket, &senderInfo, sizeof(senderInfo));
 
         if (bytes1 <= 0)
             printf("[-]cannot read Data\n");
 
-        printf("[+]Proxy received from \"Sender\": %s\n", senderInfo.data);
+        printf("\n[+]Proxy received a packet from \"Sender\": %s\n", senderInfo.data);
 
         write_stat_proxy(FILENAME, record->sentCnt, ++record->recCnt, \
                             record->sentDropCnt, record->recDropCnt, (void *)&senderInfo);
@@ -191,19 +183,19 @@ static void transfer_data(int senderSocket, int receiverSocket,
         // Don't drop the finish
         if (senderInfo.fin != 1 && drop_packet(opts->drop_data_percent) == 0) // when the packet is dropped
         {
-            printf("[!] The packet from sender is dropped\n");
+            printf("[!]The packet from sender is dropped\n");
             ++record->sentDropCnt;
             continue;
         }
 
         write(receiverSocket, &senderInfo, sizeof(senderInfo));
-        printf("[+]Proxy send to \"Receiver\": %s\n\n", senderInfo.data);
+        printf("[+]Proxy sent a packet to \"Receiver\": %s\n", senderInfo.data);
 
         write_stat_proxy(FILENAME, ++record->sentCnt, record->recCnt, \
                             record->sentDropCnt, record->recDropCnt, (void *)&senderInfo);
 
         bytes2 = read(receiverSocket, &receiverInfo, sizeof(receiverInfo));
-        printf("[+]Proxy received from \"Receiver\": %s\n", receiverInfo.data);
+        printf("\n[+]Proxy received a packet from \"Receiver\": %s\n", receiverInfo.data);
 
         write_stat_proxy(FILENAME, record->sentCnt, ++record->recCnt, \
                             record->sentDropCnt, record->recDropCnt, (void *)&receiverInfo);
@@ -211,18 +203,20 @@ static void transfer_data(int senderSocket, int receiverSocket,
         // Don't drop the finish
         if (receiverInfo.fin != 1 && drop_packet(opts->drop_ack_percent) == 0) // when the packet is dropped
         {
-            printf("[!] The packet from receiver is dropped\n");
+            printf("[!]The packet from receiver is dropped\n");
             ++record->recDropCnt;
             continue;
         }
 
         write(senderSocket, &receiverInfo, sizeof(receiverInfo));
-        printf("[+]Proxy send to \"Sender\": %s\n\n", receiverInfo.data);
+        printf("[+]Proxy sent a packet to \"Sender\": %s\n", receiverInfo.data);
 
         write_stat_proxy(FILENAME, ++record->sentCnt, record->recCnt, \
                             record->sentDropCnt, record->recDropCnt, (void *)&receiverInfo);
 
-        if (receiverInfo.fin == 1){
+        if (receiverInfo.fin == 1)
+        {
+            printf("[*]Please check the statistics (file: %s)\n", FILENAME);
             printf("@@@@@@@@@@@@@@@@@@@@ Data Transfer Completed @@@@@@@@@@@@@@@@@@@@\n");
             break;
         }
@@ -234,8 +228,10 @@ static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *o
 {
     int c;
     bool is_serverip_set = false;
-    while ((c = getopt(argc, argv, "r:i:o:d:a:")) != -1) {
-        switch(c) {
+    while ((c = getopt(argc, argv, "r:i:o:d:a:")) != -1)
+    {
+        switch(c)
+        {
             case 'r':
             {
                 opts->receiver_ip = optarg;
@@ -257,7 +253,8 @@ static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *o
             case 'd': //drop data percentage
             {
                 int data_drop_rate = atoi(optarg);
-                if (data_drop_rate < 0 && data_drop_rate > 100) {
+                if (data_drop_rate < 0 || data_drop_rate > 100)
+                {
                     error_message(__FILE__, __func__, __LINE__,
                                   "\"Drop rate is between 0 and 100\"", 5);
                 }
@@ -267,11 +264,12 @@ static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *o
             case 'a': //drop ack percentage
             {
                 int ack_drop_rate = atoi(optarg);
-                if (ack_drop_rate < 0 && ack_drop_rate > 100) {
+                if (ack_drop_rate < 0 || ack_drop_rate > 100)
+                {
                     error_message(__FILE__, __func__, __LINE__,
                                   "\"Drop rate is between 0 and 100\"", 5);
                 }
-                opts->drop_ack_percent = ack_drop_rate
+                opts->drop_ack_percent = ack_drop_rate;
                 break;
             }
             case ':':
@@ -291,12 +289,12 @@ static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *o
 static void options_init(struct proxyOptions *opts, struct dataRecord *record)
 {
     memset(opts, 0, sizeof(struct proxyOptions));
+    memset(record, 0, sizeof(struct dataRecord));
     opts->receiver_ip = "127.0.0.1"; //default localhost
     opts->proxy_port = PROXY_DEFAULT_PORT;
     opts->receiver_port = RECEIVER_DEFAULT_PORT;
     opts->drop_ack_percent = 0;
     opts->drop_data_percent = 0;
-    memset(record, 0, sizeof(struct dataRecord));
     record->sentCnt = 0;
     record->recCnt = 0;
     record->sentDropCnt = 0;

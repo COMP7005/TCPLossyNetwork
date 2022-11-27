@@ -11,7 +11,8 @@
 
 #define FILENAME "receiver_info.csv"
 
-struct dataRecord {
+struct dataRecord
+{
     int sentCnt;
     int recCnt;
 };
@@ -30,7 +31,8 @@ static int read_data(int newSocket, struct receiverOptions *opts, struct dataRec
 #define DEFAULT_RECEIVER_PORT 4444
 #define MAX_PENDING 10
 
-int main (int argc, char *argv[]) {
+int main (int argc, char *argv[])
+{
     struct receiverOptions opts;
     struct dataRecord record;
 
@@ -48,9 +50,9 @@ int main (int argc, char *argv[]) {
     pid_t childip;
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) {
+    if (sockfd < 0)
         error_errno(__FILE__, __func__ , __LINE__, errno, 1);
-    }
+
     printf("[+]Server socket created.\n");
 
     memset(&serverAddr, '\0', sizeof(serverAddr));
@@ -60,16 +62,16 @@ int main (int argc, char *argv[]) {
 
     //bind ip address to specific port
     ret = bind(sockfd, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
-    if (ret < 0) {
+    if (ret < 0)
         error_errno(__FILE__, __func__ , __LINE__, errno, 2);
-    }
 
     if (listen(sockfd, MAX_PENDING) == 0)
         printf("Listening...\n");
     else
         error_errno(__FILE__, __func__ , __LINE__, errno, 3);
 
-    while (1) {
+    while (1)
+    {
         write_stat_header(FILENAME, "Time,Sent,Received");
         newSocket = accept(sockfd, (struct sockaddr*)&newAddr, &addr_size);
 
@@ -79,13 +81,16 @@ int main (int argc, char *argv[]) {
         //set current input ip
         opts.ip_in = inet_ntoa(newAddr.sin_addr);
 
-        printf("[+]Connection accept from %s:%d\n", opts.ip_in, opts.port_in);
+        printf("\n[+]Connection accept from %s:%d\n", opts.ip_in, opts.port_in);
 
-        if ((childip = fork()) == 0) {
+        if ((childip = fork()) == 0)
+        {
             close(sockfd);
 
-            if (read_data(newSocket, &opts, &record) == 0) {
+            if (read_data(newSocket, &opts, &record) == 0)
+            {
                 printf("[+]Finished.\n");
+                printf("[*]Please check the statistics (file: %s)\n", FILENAME);
                 break;
             }
         }
@@ -97,10 +102,13 @@ int main (int argc, char *argv[]) {
 }
 
 
-static void parse_receiver_arguments(int argc, char *argv[], struct receiverOptions *opts) {
+static void parse_receiver_arguments(int argc, char *argv[], struct receiverOptions *opts)
+{
     int c;
-    while ((c = getopt(argc, argv, "p:")) != -1) {
-        switch(c) {
+    while ((c = getopt(argc, argv, "p:")) != -1)
+    {
+        switch(c)
+        {
             case 'p':
             {
                 opts->port_in = parse_port(optarg, 10);
@@ -119,9 +127,11 @@ static void parse_receiver_arguments(int argc, char *argv[], struct receiverOpti
     printf("[+]Port: %hu\n", opts->port_in);
 }
 
-static int read_data(int newSocket, struct receiverOptions *opts, struct dataRecord *record) {
+static int read_data(int newSocket, struct receiverOptions *opts, struct dataRecord *record)
+{
     int i = 0;
-    while (1) {
+    while (1)
+    {
         struct tcpInfo tcpInfo;
         struct tcpInfo tcpInfo2;
 
@@ -133,15 +143,15 @@ static int read_data(int newSocket, struct receiverOptions *opts, struct dataRec
             tcpInfo2.fin = 1;
             strcpy(tcpInfo2.data, "ACK");
 
-//            write_to_file_tmp(FILENAME, tcpInfo2.data, record->sentCnt++);
-//            write_stat(FILENAME, tcpInfo2.data, record->pshCnt++, record->ackCnt);
+            // write_to_file_tmp(FILENAME, tcpInfo2.data, record->sentCnt++);
+            // write_stat(FILENAME, tcpInfo2.data, record->pshCnt++, record->ackCnt);
 
             //send ACK
             write(newSocket, &tcpInfo2, sizeof(tcpInfo2));
             break;
         }
 
-        printf("Received: %s \n", tcpInfo.data);
+        printf("\n[Received]: %s\n", tcpInfo.data);
         write_stat(FILENAME, tcpInfo.data, record->sentCnt, ++record->recCnt);
 
         //Sending ACK
@@ -152,13 +162,15 @@ static int read_data(int newSocket, struct receiverOptions *opts, struct dataRec
 
         //send ACK
         write(newSocket, &tcpInfo2, sizeof(tcpInfo2));
+        printf("[Sending]: %s\n", tcpInfo2.data);
         write_stat(FILENAME, tcpInfo2.data, ++record->sentCnt, record->recCnt);
         i++;
     }
     return EXIT_SUCCESS;
 }
 
-static void options_init(struct receiverOptions *opts, struct dataRecord *record) {
+static void options_init(struct receiverOptions *opts, struct dataRecord *record)
+{
     memset(opts, 0, sizeof(struct receiverOptions));
     memset(record, 0, sizeof(struct dataRecord));
     opts->port_in  = DEFAULT_RECEIVER_PORT;
