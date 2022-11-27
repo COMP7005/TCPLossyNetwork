@@ -224,7 +224,7 @@ static void parse_sender_arguments(int argc, char *argv[], struct senderOptions 
     //set proxy ip as sending ip
     if (opts->proxy_ip)
         opts->sending_ip = opts->proxy_ip;
-    else
+    else if (opts->receiver_ip)
         opts->sending_ip = opts->receiver_ip;
 
     int count = 0;
