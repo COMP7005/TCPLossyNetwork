@@ -42,8 +42,6 @@ int main (int argc, char *argv[])
     int sockfd, ret;
     struct sockaddr_in serverAddr;
 
-    int newSocket;
-    struct sockaddr_in newAddr;
 
     socklen_t addr_size;
 
@@ -55,10 +53,9 @@ int main (int argc, char *argv[])
 
     printf("[+]Server socket created.\n");
 
-    memset(&serverAddr, '\0', sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(opts.port_in);
-    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    serverAddr.sin_addr.s_addr = INADDR_ANY;
 
     //bind ip address to specific port
     ret = bind(sockfd, (struct sockaddr*)&serverAddr, sizeof(serverAddr));
@@ -72,6 +69,9 @@ int main (int argc, char *argv[])
 
     while (1)
     {
+        int newSocket;
+        struct sockaddr_in newAddr;
+
         write_stat_header(FILENAME, "Time,Sent,Received");
         newSocket = accept(sockfd, (struct sockaddr*)&newAddr, &addr_size);
 
@@ -92,11 +92,11 @@ int main (int argc, char *argv[])
                 printf("[+]Finished.\n");
                 printf("[*]Please check the statistics (file: %s)\n", FILENAME);
                 break;
+                close(newSocket);
             }
         }
     }
 
-    close(newSocket);
     close(sockfd);
     return EXIT_SUCCESS;
 }
