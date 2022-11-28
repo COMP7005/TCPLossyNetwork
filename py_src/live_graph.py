@@ -23,8 +23,8 @@ def animate(i, mode, file):
             y_received = data["Received"]
 
             plt.cla()
-            plt.plot(x_time, y_sent, label = "Sent")
-            plt.plot(x_time, y_received, label = "Received")
+            plt.plot(x_time, y_sent, label = "Sent", alpha=0.8, linestyle="dotted", linewidth=8)
+            plt.plot(x_time, y_received, label = "Received", alpha=0.8, linestyle="dashed", linewidth=5)
 
         elif mode in ["Proxy"]:
             x_time = data["Time"]
@@ -34,10 +34,10 @@ def animate(i, mode, file):
             y_received_drop = data["Received_Drop"]
 
             plt.cla()
-            plt.plot(x_time, y_sent, label = "Sent")
-            plt.plot(x_time, y_received, label = "Received")
-            plt.plot(x_time, y_sent_drop, label = "Sent_Drop")
-            plt.plot(x_time, y_received_drop, label = "Received_Drop")
+            plt.plot(x_time, y_sent, label = "Sent", alpha=0.8, linestyle="dotted", linewidth=8)
+            plt.plot(x_time, y_received, label = "Received", alpha=0.8, linestyle="dashed", linewidth=5)
+            plt.plot(x_time, y_sent_drop, label = "Sent_Drop", alpha=0.8, linestyle=(0, (1, 1)), linewidth=8)
+            plt.plot(x_time, y_received_drop, label = "Received_Drop", alpha=0.8, linestyle=(0, (3, 1, 1, 1)), linewidth=5)
 
         else:
             print("There is no such mode: ", mode)
@@ -51,7 +51,7 @@ def animate(i, mode, file):
         plt.legend()
 
     except Exception as e:
-        print(e)
+        #print(e)
         # sys.exit(2)
         return
 
@@ -93,3 +93,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

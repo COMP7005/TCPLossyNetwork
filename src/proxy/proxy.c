@@ -256,7 +256,7 @@ static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *o
                 if (data_drop_rate < 0 || data_drop_rate > 100)
                 {
                     error_message(__FILE__, __func__, __LINE__,
-                                  "\"Drop rate is between 0 and 100\"", 5);
+                                  "\"Drop rate should be between 0 and 100\"", 5);
                 }
                 opts->drop_data_percent = data_drop_rate;
                 break;
@@ -267,7 +267,7 @@ static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *o
                 if (ack_drop_rate < 0 || ack_drop_rate > 100)
                 {
                     error_message(__FILE__, __func__, __LINE__,
-                                  "\"Drop rate is between 0 and 100\"", 5);
+                                  "\"Drop rate should be between 0 and 100\"", 5);
                 }
                 opts->drop_ack_percent = ack_drop_rate;
                 break;
@@ -284,17 +284,37 @@ static void parse_proxy_arguments(int argc, char *argv[], struct proxyOptions *o
             }
         }
     }
+
+    if (!opts->receiver_ip)
+        error_message(__FILE__, __func__ , __LINE__,
+                      "Receiver IP needs to be set", 7);
+
+    if (!opts->receiver_port)
+        error_message(__FILE__, __func__ , __LINE__,
+                      "Receiver port needs to be set", 7);
+
+    if (!opts->proxy_port)
+        error_message(__FILE__, __func__ , __LINE__,
+                      "Proxy port needs to be set", 7);
+
+    if (!opts->drop_data_percent)
+        error_message(__FILE__, __func__ , __LINE__,
+                      "Data-drop-rate needs to be set", 7);
+
+    if (!opts->drop_ack_percent)
+        error_message(__FILE__, __func__ , __LINE__,
+                      "Ack-drop-rate needs to be set", 7);
 }
 
 static void options_init(struct proxyOptions *opts, struct dataRecord *record)
 {
     memset(opts, 0, sizeof(struct proxyOptions));
     memset(record, 0, sizeof(struct dataRecord));
-    opts->receiver_ip = "127.0.0.1"; //default localhost
-    opts->proxy_port = PROXY_DEFAULT_PORT;
-    opts->receiver_port = RECEIVER_DEFAULT_PORT;
-    opts->drop_ack_percent = 0;
-    opts->drop_data_percent = 0;
+//    opts->receiver_ip = "127.0.0.1"; //default localhost
+//    opts->proxy_port = PROXY_DEFAULT_PORT;
+//    opts->receiver_port = RECEIVER_DEFAULT_PORT;
+//    opts->drop_ack_percent = 0;
+//    opts->drop_data_percent = 0;
     record->sentCnt = 0;
     record->recCnt = 0;
     record->sentDropCnt = 0;
