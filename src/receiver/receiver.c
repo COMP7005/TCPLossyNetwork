@@ -124,6 +124,11 @@ static void parse_receiver_arguments(int argc, char *argv[], struct receiverOpti
             }
         }
     }
+
+    if (!opts->port_in)
+        error_message(__FILE__, __func__ , __LINE__,
+                      "Receiver port needs to be set", 7);
+
     printf("[+]Port: %hu\n", opts->port_in);
 }
 
@@ -173,7 +178,7 @@ static void options_init(struct receiverOptions *opts, struct dataRecord *record
 {
     memset(opts, 0, sizeof(struct receiverOptions));
     memset(record, 0, sizeof(struct dataRecord));
-    opts->port_in  = DEFAULT_RECEIVER_PORT;
+//    opts->port_in  = DEFAULT_RECEIVER_PORT;
     record->sentCnt = 0;
     record->recCnt = 0;
 }

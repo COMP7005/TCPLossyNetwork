@@ -216,10 +216,9 @@ static void parse_sender_arguments(int argc, char *argv[], struct senderOptions 
     }
 
     //check one of them are set
-    //If not return error
     if (!opts->proxy_ip && !opts->receiver_ip)
         error_message(__FILE__, __func__ , __LINE__,
-                      "Proxy IP and Receiver IP both has not been set", 6);
+                      "Proxy IP or Receiver IP needs to be set", 6);
 
     //set proxy ip as sending ip
     if (opts->proxy_ip)
@@ -247,8 +246,8 @@ static void options_init(struct senderOptions *opts, struct dataRecord *record)
 {
     memset(opts, 0, sizeof(struct senderOptions));
     memset(record, 0, sizeof(struct dataRecord));
-    opts->proxy_ip = "127.0.0.1"; //default localhost
-    opts->receiver_ip = "127.0.0.1"; //default localhost
+//    opts->proxy_ip = "127.0.0.1"; //default localhost
+//    opts->receiver_ip = "127.0.0.1"; //default localhost
     opts->sending_ip = "127.0.0.1"; //default localhost
     opts->port  = DEFAULT_PROXY_PORT;
     record->sentCnt = 0;
