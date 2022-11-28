@@ -248,7 +248,7 @@ static void options_init(struct senderOptions *opts, struct dataRecord *record)
     memset(record, 0, sizeof(struct dataRecord));
 //    opts->proxy_ip = "127.0.0.1"; //default localhost
 //    opts->receiver_ip = "127.0.0.1"; //default localhost
-    opts->sending_ip = "127.0.0.1"; //default localhost
+//    opts->sending_ip = "127.0.0.1"; //default localhost
     opts->port  = DEFAULT_PROXY_PORT;
     record->sentCnt = 0;
     record->recCnt = 0;
